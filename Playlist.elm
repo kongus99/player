@@ -81,6 +81,30 @@ type Msg
     | UpdatePorts LSST.Operation (Maybe (LSST.Ports Msg)) LSST.Key LSST.Value
 
 
+arrayRemove : Int -> Array a -> Array a
+arrayRemove index array =
+    array
+        |> Array.toList
+        |> List.indexedMap
+            (\i ->
+                \e ->
+                    if i == index then
+                        Nothing
+                    else
+                        Just e
+            )
+        |> List.filterMap identity
+        |> Array.fromList
+
+
+getItem : Model -> (Item -> Maybe b) -> Maybe b
+getItem model getter =
+    model.selected
+        |> Maybe.andThen
+            (flip Array.get model.playlist)
+        |> Maybe.andThen getter
+
+
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
@@ -97,21 +121,7 @@ update msg model =
                     { model
                         | playlist =
                             model.selected
-                                |> Maybe.map
-                                    (\index ->
-                                        model.playlist
-                                            |> Array.toList
-                                            |> List.indexedMap
-                                                (\i ->
-                                                    \e ->
-                                                        if i == index then
-                                                            Nothing
-                                                        else
-                                                            Just e
-                                                )
-                                            |> List.filterMap identity
-                                            |> Array.fromList
-                                    )
+                                |> Maybe.map (flip arrayRemove model.playlist)
                                 |> Maybe.withDefault model.playlist
                     }
             in
@@ -129,19 +139,18 @@ update msg model =
 
         Play ->
             let
-                select selected model =
-                    Array.get selected model.playlist
-                        |> Maybe.andThen .id
+                select model =
+                    getItem model .id
             in
             case ( model.selected, model.playing ) of
                 ( Just selected, Just playing ) ->
                     if selected == playing then
                         { model | playing = Nothing } ! [ Player.elmToPlayer Nothing ]
                     else
-                        { model | playing = Just selected } ! [ select selected model |> Player.elmToPlayer ]
+                        { model | playing = Just selected } ! [ select model |> Player.elmToPlayer ]
 
                 ( Just selected, Nothing ) ->
-                    { model | playing = Just selected } ! [ select selected model |> Player.elmToPlayer ]
+                    { model | playing = Just selected } ! [ select model |> Player.elmToPlayer ]
 
                 ( Nothing, _ ) ->
                     model ! []
@@ -192,13 +201,19 @@ listItem selected index item =
 
 buttons : Model -> List (Html Msg)
 buttons model =
-    model.selected
+    let
+        maybeItem =
+            getItem model Just
+    in
+    maybeItem
         |> Maybe.map
-            (\_ ->
+            (\item ->
                 [ H.button [ E.onClick Remove ]
                     [ H.text "Remove" ]
                 , H.button [ E.onClick Play ]
                     [ H.text "Play" ]
+                , H.a [ A.href item.url, A.target "_blank" ]
+                    [ H.text item.name ]
                 ]
             )
         |> Maybe.withDefault []
