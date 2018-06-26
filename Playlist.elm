@@ -17,7 +17,12 @@ import Storage as St
 
 
 type alias Model =
-    { playlist : Array Item, currentlyPlaying : Maybe Int, edited : Item, storage : LocalStorage Msg }
+    { playlist : Array Item
+    , selected : Maybe Int
+    , playing : Maybe Int
+    , edited : Item
+    , storage : LocalStorage Msg
+    }
 
 
 encodePlaylist : Array Item -> Enc.Value
@@ -62,46 +67,18 @@ init : ( Model, Cmd Msg )
 init =
     let
         mdl =
-            Model Array.empty Nothing Item.init St.init
+            Model Array.empty Nothing Nothing Item.init St.init
     in
     mdl ! [ St.get "playlist" mdl ]
 
 
 type Msg
     = Add Item
-    | Remove Int
-    | Play Int
+    | Remove
+    | Play
+    | Select Int
     | EditMsg Item.Msg
     | UpdatePorts LSST.Operation (Maybe (LSST.Ports Msg)) LSST.Key LSST.Value
-
-
-remove : List b -> Int -> List b
-remove list index =
-    list
-        |> List.indexedMap
-            (\ind ->
-                \item ->
-                    if ind == index then
-                        Nothing
-                    else
-                        Just item
-            )
-        |> List.filterMap identity
-
-
-get : Int -> List a -> Maybe a
-get index list =
-    list
-        |> List.indexedMap
-            (\ind ->
-                \item ->
-                    if ind == index then
-                        Just item
-                    else
-                        Nothing
-            )
-        |> List.filterMap identity
-        |> List.head
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -114,53 +91,62 @@ update msg model =
             in
             mdl ! [ St.set "playlist" (encodePlaylist mdl.playlist) mdl ]
 
-        Remove index ->
+        Remove ->
             let
                 mdl =
                     { model
                         | playlist =
-                            model.playlist
-                                |> Array.toList
-                                |> List.indexedMap
-                                    (\i ->
-                                        \e ->
-                                            if i == index then
-                                                Nothing
-                                            else
-                                                Just e
+                            model.selected
+                                |> Maybe.map
+                                    (\index ->
+                                        model.playlist
+                                            |> Array.toList
+                                            |> List.indexedMap
+                                                (\i ->
+                                                    \e ->
+                                                        if i == index then
+                                                            Nothing
+                                                        else
+                                                            Just e
+                                                )
+                                            |> List.filterMap identity
+                                            |> Array.fromList
                                     )
-                                |> List.filterMap identity
-                                |> Array.fromList
+                                |> Maybe.withDefault model.playlist
                     }
             in
             mdl ! [ St.set "playlist" (encodePlaylist mdl.playlist) mdl ]
 
-        Play index ->
+        Select index ->
+            { model
+                | selected =
+                    if model.selected == Just index then
+                        Nothing
+                    else
+                        Just index
+            }
+                ! []
+
+        Play ->
             let
-                newModel =
-                    case model.currentlyPlaying of
-                        Just int ->
-                            { model
-                                | currentlyPlaying =
-                                    if int == index then
-                                        Nothing
-                                    else
-                                        Just index
-                            }
-
-                        Nothing ->
-                            { model | currentlyPlaying = Just index }
-
-                cmds =
-                    newModel.currentlyPlaying
-                        |> Maybe.andThen (\i -> Array.get i newModel.playlist)
+                select selected model =
+                    Array.get selected model.playlist
                         |> Maybe.andThen .id
-                        |> Maybe.map (\id -> Player.elmToPlayer <| Just id)
-                        |> Maybe.withDefault (Player.elmToPlayer Nothing)
             in
-            newModel
-                ! [ cmds ]
+            case ( model.selected, model.playing ) of
+                ( Just selected, Just playing ) ->
+                    if selected == playing then
+                        { model | playing = Nothing } ! [ Player.elmToPlayer Nothing ]
+                    else
+                        { model | playing = Just selected } ! [ select selected model |> Player.elmToPlayer ]
 
+                ( Just selected, Nothing ) ->
+                    { model | playing = Just selected } ! [ select selected model |> Player.elmToPlayer ]
+
+                ( Nothing, _ ) ->
+                    model ! []
+
+        -- no changes, add independent play in future
         EditMsg iMsg ->
             let
                 newItem =
@@ -178,7 +164,7 @@ update msg model =
                 mdl =
                     case operation of
                         LSST.GetItemOperation ->
-                            { model | playlist = decodePlaylist value, currentlyPlaying = Nothing }
+                            { model | playlist = decodePlaylist value, selected = Nothing }
 
                         _ ->
                             model
@@ -195,18 +181,33 @@ update msg model =
                 ! []
 
 
-listItem : Int -> Item -> Html Msg
-listItem index item =
-    H.li []
-        [ H.text item.name
-        , H.button [ A.title item.url, E.onClick (Play index) ] [ H.text "Play" ]
-        , H.button [ A.title item.url, E.onClick (Remove index) ] [ H.text "Remove" ]
+listItem : Int -> Int -> Item -> List (Html Msg)
+listItem selected index item =
+    [ H.div []
+        [ H.input [ A.type_ "radio", A.id item.url, A.name "entry", A.value item.name, A.checked (selected == index), E.onClick (Select index) ] []
+        , H.label [ A.for item.url ] [ H.text item.name ]
         ]
+    ]
+
+
+buttons : Model -> List (Html Msg)
+buttons model =
+    model.selected
+        |> Maybe.map
+            (\_ ->
+                [ H.button [ E.onClick Remove ]
+                    [ H.text "Remove" ]
+                , H.button [ E.onClick Play ]
+                    [ H.text "Play" ]
+                ]
+            )
+        |> Maybe.withDefault []
 
 
 view : Model -> Html Msg
 view model =
-    H.div []
-        [ H.map EditMsg (Item.view model.edited)
-        , H.ul [] (List.indexedMap listItem (Array.toList model.playlist))
-        ]
+    H.div [] <|
+        List.append (buttons model)
+            [ H.map EditMsg (Item.view model.edited)
+            , H.div [] (List.indexedMap (listItem <| Maybe.withDefault -1 model.selected) (Array.toList model.playlist) |> List.concatMap identity)
+            ]
