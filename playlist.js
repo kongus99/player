@@ -9226,9 +9226,114 @@ var _user$project$Player$elmToPlayer = _elm_lang$core$Native_Platform.outgoingPo
 	function (v) {
 		return (v.ctor === 'Nothing') ? null : v._0;
 	});
-var _user$project$Player$playerToElm = _elm_lang$core$Native_Platform.incomingPort(
-	'playerToElm',
-	_elm_lang$core$Json_Decode$list(_elm_lang$core$Json_Decode$string));
+var _user$project$Player$playCmd = F2(
+	function (index, items) {
+		return {
+			ctor: '::',
+			_0: _user$project$Player$elmToPlayer(
+				A2(
+					_elm_lang$core$Maybe$andThen,
+					function (_) {
+						return _.id;
+					},
+					A2(_elm_lang$core$Array$get, index, items))),
+			_1: {ctor: '[]'}
+		};
+	});
+var _user$project$Player$playerToElm = _elm_lang$core$Native_Platform.incomingPort('playerToElm', _elm_lang$core$Json_Decode$int);
+var _user$project$Player$Model = F3(
+	function (a, b, c) {
+		return {state: a, items: b, index: c};
+	});
+var _user$project$Player$StateChange = function (a) {
+	return {ctor: 'StateChange', _0: a};
+};
+var _user$project$Player$Toggle = {ctor: 'Toggle'};
+var _user$project$Player$Play = function (a) {
+	return {ctor: 'Play', _0: a};
+};
+var _user$project$Player$Other = {ctor: 'Other'};
+var _user$project$Player$Playing = {ctor: 'Playing'};
+var _user$project$Player$Paused = {ctor: 'Paused'};
+var _user$project$Player$Ended = {ctor: 'Ended'};
+var _user$project$Player$decode = function (state) {
+	var _p0 = state;
+	switch (_p0) {
+		case 0:
+			return _user$project$Player$Ended;
+		case 1:
+			return _user$project$Player$Playing;
+		case 2:
+			return _user$project$Player$Paused;
+		default:
+			return _user$project$Player$Other;
+	}
+};
+var _user$project$Player$update = F2(
+	function (model, msg) {
+		var _p1 = msg;
+		switch (_p1.ctor) {
+			case 'Play':
+				var _p2 = _p1._0;
+				return A2(
+					_elm_lang$core$Platform_Cmd_ops['!'],
+					_elm_lang$core$Native_Utils.update(
+						model,
+						{items: _p2, index: 0}),
+					A2(_user$project$Player$playCmd, 0, _p2));
+			case 'Toggle':
+				var _p3 = model.state;
+				switch (_p3.ctor) {
+					case 'Playing':
+						return A2(
+							_elm_lang$core$Platform_Cmd_ops['!'],
+							_elm_lang$core$Native_Utils.update(
+								model,
+								{state: _user$project$Player$Paused}),
+							{
+								ctor: '::',
+								_0: _user$project$Player$elmToPlayer(_elm_lang$core$Maybe$Nothing),
+								_1: {ctor: '[]'}
+							});
+					case 'Paused':
+						return A2(
+							_elm_lang$core$Platform_Cmd_ops['!'],
+							_elm_lang$core$Native_Utils.update(
+								model,
+								{state: _user$project$Player$Playing}),
+							A2(_user$project$Player$playCmd, model.index, model.items));
+					default:
+						return A2(
+							_elm_lang$core$Platform_Cmd_ops['!'],
+							model,
+							{ctor: '[]'});
+				}
+			default:
+				var newModel = _elm_lang$core$Native_Utils.update(
+					model,
+					{
+						state: _user$project$Player$decode(_p1._0)
+					});
+				var _p4 = newModel.state;
+				if (_p4.ctor === 'Ended') {
+					var index = A2(
+						_elm_lang$core$Basics_ops['%'],
+						newModel.index + 1,
+						_elm_lang$core$Array$length(newModel.items));
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						_elm_lang$core$Native_Utils.update(
+							model,
+							{index: index}),
+						A2(_user$project$Player$playCmd, index, model.items));
+				} else {
+					return A2(
+						_elm_lang$core$Platform_Cmd_ops['!'],
+						newModel,
+						{ctor: '[]'});
+				}
+		}
+	});
 
 var _user$project$Storage$prefix = 'playlists';
 var _user$project$Storage$set = F3(
