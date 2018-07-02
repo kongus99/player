@@ -1,11 +1,11 @@
-port module Player exposing (Msg(..), elmToPlayer)
+port module Player exposing (Msg(..), Model, elmToPlayer, init)
 
 import Array exposing (Array)
-import Item exposing (Item)
+import Item exposing (ValidItem)
 
 
 type Msg
-    = Play (Array Item)
+    = Play (Array ValidItem)
     | Toggle
     | StateChange Int
 
@@ -27,7 +27,12 @@ type State
 
 
 type alias Model =
-    { state : State, items : Array Item, index : Int }
+    { state : State, items : Array ValidItem, index : Int }
+
+
+init : Model
+init =
+    Model Ended Array.empty 0
 
 
 
@@ -50,11 +55,12 @@ decode state =
         _ ->
             Other
 
-playCmd : Int -> Array Item -> List (Cmd msg)
+
+playCmd : Int -> Array ValidItem -> List (Cmd msg)
 playCmd index items =
     [ items
         |> Array.get index
-        |> Maybe.andThen .id
+        |> Maybe.map .id
         |> elmToPlayer
     ]
 
