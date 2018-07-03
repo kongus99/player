@@ -1,6 +1,5 @@
 module Playlist exposing (..)
 
-import Array exposing (Array)
 import Dict exposing (Dict)
 import Html as H exposing (Html)
 import Html.Attributes as A
@@ -11,6 +10,7 @@ import Json.Encode as Enc
 import LocalStorage exposing (LocalStorage)
 import LocalStorage.SharedTypes as LSST
 import Player
+import Set exposing (Set)
 import Storage as St
 
 
@@ -44,7 +44,7 @@ modeEncoder s =
 
 type alias Model =
     { playlist : Dict String ValidItem
-    , selected : Maybe String
+    , selected : Set String
     , playing : Maybe String
     , mode : Mode
     , edited : Item.Model
@@ -97,7 +97,7 @@ init =
     let
         mdl =
             Model Dict.empty
-                Nothing
+                Set.empty
                 Nothing
                 Single
                 Item.init
@@ -121,6 +121,8 @@ type Msg
 getItem : Model -> (ValidItem -> b) -> Maybe b
 getItem model getter =
     model.selected
+        |> Set.toList
+        |> List.head
         |> Maybe.andThen
             (flip Dict.get model.playlist)
         |> Maybe.map getter
@@ -138,23 +140,41 @@ update msg model =
 
         Remove ->
             let
+                id =
+                    getItem model .id
+
                 mdl =
                     { model
                         | playlist =
-                            model.selected
+                            id
                                 |> Maybe.map (flip Dict.remove model.playlist)
                                 |> Maybe.withDefault model.playlist
+                        , selected =
+                            id
+                                |> Maybe.map (flip Set.remove model.selected)
+                                |> Maybe.withDefault model.selected
                     }
             in
             mdl ! [ St.set "playlist" (encodePlaylist mdl.playlist) mdl ]
 
         Select id ->
+            let
+                toggle =
+                    model.selected
+                        |> (if Set.member id model.selected then
+                                Set.remove id
+                            else
+                                Set.insert id
+                           )
+            in
             { model
                 | selected =
-                    if model.selected == Just id then
-                        Nothing
-                    else
-                        Just id
+                    case model.mode of
+                        Single ->
+                            Set.empty |> Set.insert id
+
+                        Playlist ->
+                            toggle
             }
                 ! []
 
@@ -163,7 +183,7 @@ update msg model =
                 select model =
                     getItem model .id
             in
-            case ( model.selected, model.playing ) of
+            case ( getItem model .id, model.playing ) of
                 ( Just selected, Just playing ) ->
                     if selected == playing then
                         { model | playing = Nothing } ! [ Player.elmToPlayer Nothing ]
@@ -194,7 +214,7 @@ update msg model =
                 mdl =
                     case operation of
                         LSST.GetItemOperation ->
-                            { model | playlist = decodePlaylist value, selected = Nothing }
+                            { model | playlist = decodePlaylist value, selected = Set.empty }
 
                         _ ->
                             model
@@ -214,21 +234,30 @@ update msg model =
             { model | mode = m } ! []
 
 
-listItem : Maybe String -> ValidItem -> List (Html Msg)
-listItem selected item =
-    [ H.div []
-        [ H.input
-            [ A.type_ "radio"
-            , A.id item.url
-            , A.name "entry"
-            , A.value item.name
-            , A.checked (selected == Just item.id)
-            , E.onClick (Select item.id)
+listItem : Model -> ValidItem -> List (Html Msg)
+listItem { selected, mode } item =
+    let
+        selector type_ =
+            [ H.div []
+                [ H.input
+                    [ A.type_ type_
+                    , A.id item.url
+                    , A.name (modeEncoder mode)
+                    , A.value item.name
+                    , A.checked (Set.member item.id selected)
+                    , E.onClick (Select item.id)
+                    ]
+                    []
+                , H.label [ A.for item.url ] [ H.text item.name ]
+                ]
             ]
-            []
-        , H.label [ A.for item.url ] [ H.text item.name ]
-        ]
-    ]
+    in
+    case mode of
+        Single ->
+            selector "radio"
+
+        Playlist ->
+            selector "checkbox"
 
 
 buttons : Model -> List (Html Msg)
@@ -265,7 +294,7 @@ view model =
               , H.div []
                     (Dict.values model.playlist
                         |> List.sortBy .name
-                        |> List.map (listItem model.selected)
+                        |> List.map (listItem model)
                         |> List.concatMap identity
                     )
               ]

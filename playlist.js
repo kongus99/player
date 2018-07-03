@@ -6593,6 +6593,137 @@ var _billstclair$elm_localstorage$LocalStorage$make = F2(
 			{ctor: '_Tuple2', _0: ports, _1: prefix});
 	});
 
+var _elm_lang$core$Set$foldr = F3(
+	function (f, b, _p0) {
+		var _p1 = _p0;
+		return A3(
+			_elm_lang$core$Dict$foldr,
+			F3(
+				function (k, _p2, b) {
+					return A2(f, k, b);
+				}),
+			b,
+			_p1._0);
+	});
+var _elm_lang$core$Set$foldl = F3(
+	function (f, b, _p3) {
+		var _p4 = _p3;
+		return A3(
+			_elm_lang$core$Dict$foldl,
+			F3(
+				function (k, _p5, b) {
+					return A2(f, k, b);
+				}),
+			b,
+			_p4._0);
+	});
+var _elm_lang$core$Set$toList = function (_p6) {
+	var _p7 = _p6;
+	return _elm_lang$core$Dict$keys(_p7._0);
+};
+var _elm_lang$core$Set$size = function (_p8) {
+	var _p9 = _p8;
+	return _elm_lang$core$Dict$size(_p9._0);
+};
+var _elm_lang$core$Set$member = F2(
+	function (k, _p10) {
+		var _p11 = _p10;
+		return A2(_elm_lang$core$Dict$member, k, _p11._0);
+	});
+var _elm_lang$core$Set$isEmpty = function (_p12) {
+	var _p13 = _p12;
+	return _elm_lang$core$Dict$isEmpty(_p13._0);
+};
+var _elm_lang$core$Set$Set_elm_builtin = function (a) {
+	return {ctor: 'Set_elm_builtin', _0: a};
+};
+var _elm_lang$core$Set$empty = _elm_lang$core$Set$Set_elm_builtin(_elm_lang$core$Dict$empty);
+var _elm_lang$core$Set$singleton = function (k) {
+	return _elm_lang$core$Set$Set_elm_builtin(
+		A2(
+			_elm_lang$core$Dict$singleton,
+			k,
+			{ctor: '_Tuple0'}));
+};
+var _elm_lang$core$Set$insert = F2(
+	function (k, _p14) {
+		var _p15 = _p14;
+		return _elm_lang$core$Set$Set_elm_builtin(
+			A3(
+				_elm_lang$core$Dict$insert,
+				k,
+				{ctor: '_Tuple0'},
+				_p15._0));
+	});
+var _elm_lang$core$Set$fromList = function (xs) {
+	return A3(_elm_lang$core$List$foldl, _elm_lang$core$Set$insert, _elm_lang$core$Set$empty, xs);
+};
+var _elm_lang$core$Set$map = F2(
+	function (f, s) {
+		return _elm_lang$core$Set$fromList(
+			A2(
+				_elm_lang$core$List$map,
+				f,
+				_elm_lang$core$Set$toList(s)));
+	});
+var _elm_lang$core$Set$remove = F2(
+	function (k, _p16) {
+		var _p17 = _p16;
+		return _elm_lang$core$Set$Set_elm_builtin(
+			A2(_elm_lang$core$Dict$remove, k, _p17._0));
+	});
+var _elm_lang$core$Set$union = F2(
+	function (_p19, _p18) {
+		var _p20 = _p19;
+		var _p21 = _p18;
+		return _elm_lang$core$Set$Set_elm_builtin(
+			A2(_elm_lang$core$Dict$union, _p20._0, _p21._0));
+	});
+var _elm_lang$core$Set$intersect = F2(
+	function (_p23, _p22) {
+		var _p24 = _p23;
+		var _p25 = _p22;
+		return _elm_lang$core$Set$Set_elm_builtin(
+			A2(_elm_lang$core$Dict$intersect, _p24._0, _p25._0));
+	});
+var _elm_lang$core$Set$diff = F2(
+	function (_p27, _p26) {
+		var _p28 = _p27;
+		var _p29 = _p26;
+		return _elm_lang$core$Set$Set_elm_builtin(
+			A2(_elm_lang$core$Dict$diff, _p28._0, _p29._0));
+	});
+var _elm_lang$core$Set$filter = F2(
+	function (p, _p30) {
+		var _p31 = _p30;
+		return _elm_lang$core$Set$Set_elm_builtin(
+			A2(
+				_elm_lang$core$Dict$filter,
+				F2(
+					function (k, _p32) {
+						return p(k);
+					}),
+				_p31._0));
+	});
+var _elm_lang$core$Set$partition = F2(
+	function (p, _p33) {
+		var _p34 = _p33;
+		var _p35 = A2(
+			_elm_lang$core$Dict$partition,
+			F2(
+				function (k, _p36) {
+					return p(k);
+				}),
+			_p34._0);
+		var p1 = _p35._0;
+		var p2 = _p35._1;
+		return {
+			ctor: '_Tuple2',
+			_0: _elm_lang$core$Set$Set_elm_builtin(p1),
+			_1: _elm_lang$core$Set$Set_elm_builtin(p2)
+		};
+	});
+
 var _elm_lang$virtual_dom$VirtualDom_Debug$wrap;
 var _elm_lang$virtual_dom$VirtualDom_Debug$wrapWithFlags;
 
@@ -9519,7 +9650,8 @@ var _user$project$Playlist$getItem = F2(
 			A2(
 				_elm_lang$core$Maybe$andThen,
 				A2(_elm_lang$core$Basics$flip, _elm_lang$core$Dict$get, model.playlist),
-				model.selected));
+				_elm_lang$core$List$head(
+					_elm_lang$core$Set$toList(model.selected))));
 	});
 var _user$project$Playlist$decodePlaylist = function (value) {
 	var item = A3(
@@ -9600,7 +9732,7 @@ var _user$project$Playlist$modeDecoder = function (s) {
 	}
 };
 var _user$project$Playlist$init = function () {
-	var mdl = A8(_user$project$Playlist$Model, _elm_lang$core$Dict$empty, _elm_lang$core$Maybe$Nothing, _elm_lang$core$Maybe$Nothing, _user$project$Playlist$Single, _user$project$Item$init, _user$project$Player$init, _user$project$Player$init, _user$project$Storage$init);
+	var mdl = A8(_user$project$Playlist$Model, _elm_lang$core$Dict$empty, _elm_lang$core$Set$empty, _elm_lang$core$Maybe$Nothing, _user$project$Playlist$Single, _user$project$Item$init, _user$project$Player$init, _user$project$Player$init, _user$project$Storage$init);
 	return A2(
 		_elm_lang$core$Platform_Cmd_ops['!'],
 		mdl,
@@ -9624,65 +9756,74 @@ var _user$project$Playlist$Select = function (a) {
 	return {ctor: 'Select', _0: a};
 };
 var _user$project$Playlist$listItem = F2(
-	function (selected, item) {
-		return {
-			ctor: '::',
-			_0: A2(
-				_elm_lang$html$Html$div,
-				{ctor: '[]'},
-				{
-					ctor: '::',
-					_0: A2(
-						_elm_lang$html$Html$input,
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html_Attributes$type_('radio'),
-							_1: {
+	function (_p8, item) {
+		var _p9 = _p8;
+		var _p11 = _p9.mode;
+		var selector = function (type_) {
+			return {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$div,
+					{ctor: '[]'},
+					{
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$input,
+							{
 								ctor: '::',
-								_0: _elm_lang$html$Html_Attributes$id(item.url),
+								_0: _elm_lang$html$Html_Attributes$type_(type_),
 								_1: {
 									ctor: '::',
-									_0: _elm_lang$html$Html_Attributes$name('entry'),
+									_0: _elm_lang$html$Html_Attributes$id(item.url),
 									_1: {
 										ctor: '::',
-										_0: _elm_lang$html$Html_Attributes$value(item.name),
+										_0: _elm_lang$html$Html_Attributes$name(
+											_user$project$Playlist$modeEncoder(_p11)),
 										_1: {
 											ctor: '::',
-											_0: _elm_lang$html$Html_Attributes$checked(
-												_elm_lang$core$Native_Utils.eq(
-													selected,
-													_elm_lang$core$Maybe$Just(item.id))),
+											_0: _elm_lang$html$Html_Attributes$value(item.name),
 											_1: {
 												ctor: '::',
-												_0: _elm_lang$html$Html_Events$onClick(
-													_user$project$Playlist$Select(item.id)),
-												_1: {ctor: '[]'}
+												_0: _elm_lang$html$Html_Attributes$checked(
+													A2(_elm_lang$core$Set$member, item.id, _p9.selected)),
+												_1: {
+													ctor: '::',
+													_0: _elm_lang$html$Html_Events$onClick(
+														_user$project$Playlist$Select(item.id)),
+													_1: {ctor: '[]'}
+												}
 											}
 										}
 									}
 								}
-							}
-						},
-						{ctor: '[]'}),
-					_1: {
-						ctor: '::',
-						_0: A2(
-							_elm_lang$html$Html$label,
-							{
-								ctor: '::',
-								_0: _elm_lang$html$Html_Attributes$for(item.url),
-								_1: {ctor: '[]'}
 							},
-							{
-								ctor: '::',
-								_0: _elm_lang$html$Html$text(item.name),
-								_1: {ctor: '[]'}
-							}),
-						_1: {ctor: '[]'}
-					}
-				}),
-			_1: {ctor: '[]'}
+							{ctor: '[]'}),
+						_1: {
+							ctor: '::',
+							_0: A2(
+								_elm_lang$html$Html$label,
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html_Attributes$for(item.url),
+									_1: {ctor: '[]'}
+								},
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html$text(item.name),
+									_1: {ctor: '[]'}
+								}),
+							_1: {ctor: '[]'}
+						}
+					}),
+				_1: {ctor: '[]'}
+			};
 		};
+		var _p10 = _p11;
+		if (_p10.ctor === 'Single') {
+			return selector('radio');
+		} else {
+			return selector('checkbox');
+		}
 	});
 var _user$project$Playlist$Play = {ctor: 'Play'};
 var _user$project$Playlist$Remove = {ctor: 'Remove'};
@@ -9761,9 +9902,9 @@ var _user$project$Playlist$view = function (model) {
 						{
 							ctor: '::',
 							_0: _elm_lang$html$Html_Events$onInput(
-								function (_p8) {
+								function (_p12) {
 									return _user$project$Playlist$ModeChanged(
-										_user$project$Playlist$modeDecoder(_p8));
+										_user$project$Playlist$modeDecoder(_p12));
 								}),
 							_1: {ctor: '[]'}
 						},
@@ -9825,7 +9966,7 @@ var _user$project$Playlist$view = function (model) {
 										_elm_lang$core$Basics$identity,
 										A2(
 											_elm_lang$core$List$map,
-											_user$project$Playlist$listItem(model.selected),
+											_user$project$Playlist$listItem(model),
 											A2(
 												_elm_lang$core$List$sortBy,
 												function (_) {
@@ -9847,14 +9988,14 @@ var _user$project$Playlist$update = F2(
 	function (msg, model) {
 		update:
 		while (true) {
-			var _p9 = msg;
-			switch (_p9.ctor) {
+			var _p13 = msg;
+			switch (_p13.ctor) {
 				case 'Add':
-					var _p10 = _p9._0;
+					var _p14 = _p13._0;
 					var mdl = _elm_lang$core$Native_Utils.update(
 						model,
 						{
-							playlist: A3(_elm_lang$core$Dict$insert, _p10.id, _p10, model.playlist)
+							playlist: A3(_elm_lang$core$Dict$insert, _p14.id, _p14, model.playlist)
 						});
 					return A2(
 						_elm_lang$core$Platform_Cmd_ops['!'],
@@ -9869,6 +10010,12 @@ var _user$project$Playlist$update = F2(
 							_1: {ctor: '[]'}
 						});
 				case 'Remove':
+					var id = A2(
+						_user$project$Playlist$getItem,
+						model,
+						function (_) {
+							return _.id;
+						});
 					var mdl = _elm_lang$core$Native_Utils.update(
 						model,
 						{
@@ -9878,7 +10025,14 @@ var _user$project$Playlist$update = F2(
 								A2(
 									_elm_lang$core$Maybe$map,
 									A2(_elm_lang$core$Basics$flip, _elm_lang$core$Dict$remove, model.playlist),
-									model.selected))
+									id)),
+							selected: A2(
+								_elm_lang$core$Maybe$withDefault,
+								model.selected,
+								A2(
+									_elm_lang$core$Maybe$map,
+									A2(_elm_lang$core$Basics$flip, _elm_lang$core$Set$remove, model.selected),
+									id))
 						});
 					return A2(
 						_elm_lang$core$Platform_Cmd_ops['!'],
@@ -9893,15 +10047,21 @@ var _user$project$Playlist$update = F2(
 							_1: {ctor: '[]'}
 						});
 				case 'Select':
-					var _p11 = _p9._0;
+					var _p16 = _p13._0;
+					var toggle = (A2(_elm_lang$core$Set$member, _p16, model.selected) ? _elm_lang$core$Set$remove(_p16) : _elm_lang$core$Set$insert(_p16))(model.selected);
 					return A2(
 						_elm_lang$core$Platform_Cmd_ops['!'],
 						_elm_lang$core$Native_Utils.update(
 							model,
 							{
-								selected: _elm_lang$core$Native_Utils.eq(
-									model.selected,
-									_elm_lang$core$Maybe$Just(_p11)) ? _elm_lang$core$Maybe$Nothing : _elm_lang$core$Maybe$Just(_p11)
+								selected: function () {
+									var _p15 = model.mode;
+									if (_p15.ctor === 'Single') {
+										return A2(_elm_lang$core$Set$insert, _p16, _elm_lang$core$Set$empty);
+									} else {
+										return toggle;
+									}
+								}()
 							}),
 						{ctor: '[]'});
 				case 'Play':
@@ -9913,11 +10073,20 @@ var _user$project$Playlist$update = F2(
 								return _.id;
 							});
 					};
-					var _p12 = {ctor: '_Tuple2', _0: model.selected, _1: model.playing};
-					if (_p12._0.ctor === 'Just') {
-						if (_p12._1.ctor === 'Just') {
-							var _p13 = _p12._0._0;
-							return _elm_lang$core$Native_Utils.eq(_p13, _p12._1._0) ? A2(
+					var _p17 = {
+						ctor: '_Tuple2',
+						_0: A2(
+							_user$project$Playlist$getItem,
+							model,
+							function (_) {
+								return _.id;
+							}),
+						_1: model.playing
+					};
+					if (_p17._0.ctor === 'Just') {
+						if (_p17._1.ctor === 'Just') {
+							var _p18 = _p17._0._0;
+							return _elm_lang$core$Native_Utils.eq(_p18, _p17._1._0) ? A2(
 								_elm_lang$core$Platform_Cmd_ops['!'],
 								_elm_lang$core$Native_Utils.update(
 									model,
@@ -9931,7 +10100,7 @@ var _user$project$Playlist$update = F2(
 								_elm_lang$core$Native_Utils.update(
 									model,
 									{
-										playing: _elm_lang$core$Maybe$Just(_p13)
+										playing: _elm_lang$core$Maybe$Just(_p18)
 									}),
 								{
 									ctor: '::',
@@ -9945,7 +10114,7 @@ var _user$project$Playlist$update = F2(
 								_elm_lang$core$Native_Utils.update(
 									model,
 									{
-										playing: _elm_lang$core$Maybe$Just(_p12._0._0)
+										playing: _elm_lang$core$Maybe$Just(_p17._0._0)
 									}),
 								{
 									ctor: '::',
@@ -9961,16 +10130,16 @@ var _user$project$Playlist$update = F2(
 							{ctor: '[]'});
 					}
 				case 'EditMsg':
-					var _p15 = _p9._0;
-					var newItem = A2(_user$project$Item$update, _p15, model.edited);
-					var _p14 = _p15;
-					if (_p14.ctor === 'Save') {
-						var _v7 = _user$project$Playlist$Add(_p14._0),
-							_v8 = _elm_lang$core$Native_Utils.update(
+					var _p20 = _p13._0;
+					var newItem = A2(_user$project$Item$update, _p20, model.edited);
+					var _p19 = _p20;
+					if (_p19.ctor === 'Save') {
+						var _v10 = _user$project$Playlist$Add(_p19._0),
+							_v11 = _elm_lang$core$Native_Utils.update(
 							model,
 							{edited: newItem});
-						msg = _v7;
-						model = _v8;
+						msg = _v10;
+						model = _v11;
 						continue update;
 					} else {
 						return A2(
@@ -9982,13 +10151,13 @@ var _user$project$Playlist$update = F2(
 					}
 				case 'UpdatePorts':
 					var mdl = function () {
-						var _p16 = _p9._0;
-						if (_p16.ctor === 'GetItemOperation') {
+						var _p21 = _p13._0;
+						if (_p21.ctor === 'GetItemOperation') {
 							return _elm_lang$core$Native_Utils.update(
 								model,
 								{
-									playlist: _user$project$Playlist$decodePlaylist(_p9._3),
-									selected: _elm_lang$core$Maybe$Nothing
+									playlist: _user$project$Playlist$decodePlaylist(_p13._3),
+									selected: _elm_lang$core$Set$empty
 								});
 						} else {
 							return model;
@@ -10000,11 +10169,11 @@ var _user$project$Playlist$update = F2(
 							mdl,
 							{
 								storage: function () {
-									var _p17 = _p9._1;
-									if (_p17.ctor === 'Nothing') {
+									var _p22 = _p13._1;
+									if (_p22.ctor === 'Nothing') {
 										return model.storage;
 									} else {
-										return A2(_billstclair$elm_localstorage$LocalStorage$setPorts, _p17._0, model.storage);
+										return A2(_billstclair$elm_localstorage$LocalStorage$setPorts, _p22._0, model.storage);
 									}
 								}()
 							}),
@@ -10014,7 +10183,7 @@ var _user$project$Playlist$update = F2(
 						_elm_lang$core$Platform_Cmd_ops['!'],
 						_elm_lang$core$Native_Utils.update(
 							model,
-							{mode: _p9._0}),
+							{mode: _p13._0}),
 						{ctor: '[]'});
 			}
 		}
