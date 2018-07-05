@@ -1,4 +1,4 @@
-port module Player exposing (Msg(..), Model, elmToPlayer, init)
+port module Player exposing (Model, Msg(..), elmToPlayer, init)
 
 import Array exposing (Array)
 import Item exposing (ValidItem)
