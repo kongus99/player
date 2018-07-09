@@ -86,7 +86,7 @@ update msg model =
             updateItem (getUrl model) n
 
         ChangeUrl n ->
-            updateItem (getName model) n
+            updateItem n (getName model)
 
         Save i ->
             update Clear model

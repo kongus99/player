@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <title>Playlists</title>
-  <script type='text/javascript' src='playlist.js'></script>
+  <script type='text/javascript' src='index.js'></script>
   <script type='text/javascript' src='js/ElmLocalStoragePorts.js'></script>
   <script type='text/javascript' src='js/player.js'></script>
 </head>
@@ -17,7 +17,7 @@
     var firstScriptTag = document.getElementsByTagName('script')[0];
     firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
     function onYouTubeIframeAPIReady() {
-      var app = Elm.Playlist.embed(document.getElementById('elm'));
+      var app = Elm.Main.embed(document.getElementById('elm'));
       var ElmYoutubePlayer = new Player('player', '', (p) => (e) => {
         if(e.data === 0) 
           e.target.playVideo();
