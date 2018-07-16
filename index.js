@@ -9603,9 +9603,9 @@ var _user$project$Player$update = F2(
 var _user$project$Playlist$current = function (_p0) {
 	var _p1 = _p0;
 	return A2(
-		_elm_lang$core$Maybe$withDefault,
-		{ctor: '[]'},
-		A2(_elm_lang$core$Dict$get, _p1.selected, _p1.backlog));
+		_elm_lang$core$Maybe$andThen,
+		A2(_elm_lang$core$Basics$flip, _elm_lang$core$Dict$get, _p1.backlog),
+		_p1.selected);
 };
 var _user$project$Playlist$update = F2(
 	function (msg, playlist) {
@@ -9614,7 +9614,9 @@ var _user$project$Playlist$update = F2(
 			case 'SelectPlaylist':
 				return _elm_lang$core$Native_Utils.update(
 					playlist,
-					{selected: _p2._0});
+					{
+						selected: _elm_lang$core$Maybe$Just(_p2._0)
+					});
 			case 'AddPlaylist':
 				return _elm_lang$core$String$isEmpty(playlist.$new) ? playlist : _elm_lang$core$Native_Utils.update(
 					playlist,
@@ -9625,7 +9627,7 @@ var _user$project$Playlist$update = F2(
 							playlist.$new,
 							{ctor: '[]'},
 							playlist.backlog),
-						selected: _elm_lang$core$Native_Utils.eq(playlist.selected, '') ? playlist.$new : playlist.selected
+						selected: _elm_lang$core$Native_Utils.eq(playlist.selected, _elm_lang$core$Maybe$Nothing) ? _elm_lang$core$Maybe$Just(playlist.$new) : playlist.selected
 					});
 			case 'EditPlaylist':
 				return _elm_lang$core$Native_Utils.update(
@@ -9635,36 +9637,51 @@ var _user$project$Playlist$update = F2(
 				return _elm_lang$core$Native_Utils.update(
 					playlist,
 					{
-						selected: A2(
+						selected: _elm_lang$core$List$head(
+							_elm_lang$core$Dict$keys(playlist.backlog)),
+						backlog: A2(
 							_elm_lang$core$Maybe$withDefault,
-							'',
-							_elm_lang$core$List$head(
-								_elm_lang$core$Dict$keys(playlist.backlog))),
-						backlog: A2(_elm_lang$core$Dict$remove, playlist.selected, playlist.backlog)
+							_elm_lang$core$Dict$empty,
+							A2(
+								_elm_lang$core$Maybe$map,
+								A2(_elm_lang$core$Basics$flip, _elm_lang$core$Dict$remove, playlist.backlog),
+								playlist.selected))
 					});
 			case 'ToggleSong':
-				var _p3 = _p2._0;
+				var _p5 = _p2._0;
 				var currentEntry = _user$project$Playlist$current(playlist);
 				return _elm_lang$core$Native_Utils.update(
 					playlist,
 					{
-						backlog: A3(
-							_elm_lang$core$Basics$flip,
-							_elm_lang$core$Dict$insert(playlist.selected),
-							playlist.backlog,
-							A2(_elm_lang$core$List$member, _p3, currentEntry) ? A2(
-								_elm_lang$core$List$filter,
-								function (e) {
-									return !_elm_lang$core$Native_Utils.eq(e, _p3);
-								},
-								currentEntry) : A2(
-								_elm_lang$core$List$append,
-								currentEntry,
-								{
-									ctor: '::',
-									_0: _p3,
-									_1: {ctor: '[]'}
-								}))
+						backlog: function () {
+							var _p3 = {ctor: '_Tuple2', _0: currentEntry, _1: playlist.selected};
+							if (_p3._0.ctor === 'Nothing') {
+								return playlist.backlog;
+							} else {
+								if (_p3._1.ctor === 'Nothing') {
+									return playlist.backlog;
+								} else {
+									var _p4 = _p3._0._0;
+									return A3(
+										_elm_lang$core$Basics$flip,
+										_elm_lang$core$Dict$insert(_p3._1._0),
+										playlist.backlog,
+										A2(_elm_lang$core$List$member, _p5, _p4) ? A2(
+											_elm_lang$core$List$filter,
+											function (e) {
+												return !_elm_lang$core$Native_Utils.eq(e, _p5);
+											},
+											_p4) : A2(
+											_elm_lang$core$List$append,
+											_p4,
+											{
+												ctor: '::',
+												_0: _p5,
+												_1: {ctor: '[]'}
+											}));
+								}
+							}
+						}()
 					});
 			default:
 				return _elm_lang$core$Native_Utils.update(
@@ -9689,7 +9706,7 @@ var _user$project$Playlist$Playlist = F3(
 	function (a, b, c) {
 		return {$new: a, selected: b, backlog: c};
 	});
-var _user$project$Playlist$empty = A3(_user$project$Playlist$Playlist, '', '', _elm_lang$core$Dict$empty);
+var _user$project$Playlist$empty = A3(_user$project$Playlist$Playlist, '', _elm_lang$core$Maybe$Nothing, _elm_lang$core$Dict$empty);
 var _user$project$Playlist$RemoveSong = function (a) {
 	return {ctor: 'RemoveSong', _0: a};
 };
@@ -9772,7 +9789,9 @@ var _user$project$Playlist$lister = function (playlist) {
 								_1: {
 									ctor: '::',
 									_0: _elm_lang$html$Html_Attributes$selected(
-										_elm_lang$core$Native_Utils.eq(n, playlist.selected)),
+										_elm_lang$core$Native_Utils.eq(
+											_elm_lang$core$Maybe$Just(n),
+											playlist.selected)),
 									_1: {ctor: '[]'}
 								}
 							},
@@ -9853,7 +9872,9 @@ var _user$project$Main$getItem = F2(
 			A2(
 				_elm_lang$core$Maybe$andThen,
 				A2(_elm_lang$core$Basics$flip, _elm_lang$core$Dict$get, model.pool),
-				_elm_lang$core$List$head(
+				A2(
+					_elm_lang$core$Maybe$andThen,
+					_elm_lang$core$List$head,
 					_user$project$Playlist$current(model.playlist))));
 	});
 var _user$project$Main$decodePool = function (value) {
@@ -9927,9 +9948,6 @@ var _user$project$Main$init = function () {
 			_1: {ctor: '[]'}
 		});
 }();
-var _user$project$Main$PlaylistSwitch = function (a) {
-	return {ctor: 'PlaylistSwitch', _0: a};
-};
 var _user$project$Main$UpdatePorts = F4(
 	function (a, b, c, d) {
 		return {ctor: 'UpdatePorts', _0: a, _1: b, _2: c, _3: d};
@@ -10066,64 +10084,73 @@ var _user$project$Main$buttons = function (model) {
 			maybeItem));
 };
 var _user$project$Main$view = function (model) {
-	var current = _elm_lang$core$Set$fromList(
-		_user$project$Playlist$current(model.playlist));
+	var playlistControls = {
+		ctor: '::',
+		_0: A2(
+			_elm_lang$html$Html$map,
+			_user$project$Main$PlaylistMsg,
+			_user$project$Playlist$adder(model.playlist)),
+		_1: {
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$map,
+				_user$project$Main$PlaylistMsg,
+				_user$project$Playlist$lister(model.playlist)),
+			_1: {ctor: '[]'}
+		}
+	};
 	return A2(
 		_elm_lang$html$Html$div,
 		{ctor: '[]'},
-		_elm_lang$core$List$concat(
-			{
-				ctor: '::',
-				_0: {
-					ctor: '::',
-					_0: A2(
-						_elm_lang$html$Html$map,
-						_user$project$Main$PlaylistMsg,
-						_user$project$Playlist$adder(model.playlist)),
-					_1: {
+		function () {
+			var _p6 = A2(
+				_elm_lang$core$Maybe$map,
+				_elm_lang$core$Set$fromList,
+				_user$project$Playlist$current(model.playlist));
+			if (_p6.ctor === 'Nothing') {
+				return playlistControls;
+			} else {
+				return _elm_lang$core$List$concat(
+					{
 						ctor: '::',
-						_0: A2(
-							_elm_lang$html$Html$map,
-							_user$project$Main$PlaylistMsg,
-							_user$project$Playlist$lister(model.playlist)),
-						_1: {ctor: '[]'}
-					}
-				},
-				_1: {
-					ctor: '::',
-					_0: _user$project$Main$buttons(model),
-					_1: {
-						ctor: '::',
-						_0: {
+						_0: playlistControls,
+						_1: {
 							ctor: '::',
-							_0: A2(
-								_elm_lang$html$Html$map,
-								_user$project$Main$EditMsg,
-								_user$project$Item$view(model.edited)),
+							_0: _user$project$Main$buttons(model),
 							_1: {
 								ctor: '::',
-								_0: A2(
-									_elm_lang$html$Html$div,
-									{ctor: '[]'},
-									A2(
-										_elm_lang$core$List$concatMap,
-										_elm_lang$core$Basics$identity,
-										A2(
-											_elm_lang$core$List$map,
-											_user$project$Main$listItem(current),
+								_0: {
+									ctor: '::',
+									_0: A2(
+										_elm_lang$html$Html$map,
+										_user$project$Main$EditMsg,
+										_user$project$Item$view(model.edited)),
+									_1: {
+										ctor: '::',
+										_0: A2(
+											_elm_lang$html$Html$div,
+											{ctor: '[]'},
 											A2(
-												_elm_lang$core$List$sortBy,
-												function (_) {
-													return _.name;
-												},
-												_elm_lang$core$Dict$values(model.pool))))),
+												_elm_lang$core$List$concatMap,
+												_elm_lang$core$Basics$identity,
+												A2(
+													_elm_lang$core$List$map,
+													_user$project$Main$listItem(_p6._0),
+													A2(
+														_elm_lang$core$List$sortBy,
+														function (_) {
+															return _.name;
+														},
+														_elm_lang$core$Dict$values(model.pool))))),
+										_1: {ctor: '[]'}
+									}
+								},
 								_1: {ctor: '[]'}
 							}
-						},
-						_1: {ctor: '[]'}
-					}
-				}
-			}));
+						}
+					});
+			}
+		}());
 };
 var _user$project$Main$Add = function (a) {
 	return {ctor: 'Add', _0: a};
@@ -10132,14 +10159,14 @@ var _user$project$Main$update = F2(
 	function (msg, model) {
 		update:
 		while (true) {
-			var _p6 = msg;
-			switch (_p6.ctor) {
+			var _p7 = msg;
+			switch (_p7.ctor) {
 				case 'Add':
-					var _p7 = _p6._0;
+					var _p8 = _p7._0;
 					var mdl = _elm_lang$core$Native_Utils.update(
 						model,
 						{
-							pool: A3(_elm_lang$core$Dict$insert, _p7.id, _p7, model.pool)
+							pool: A3(_elm_lang$core$Dict$insert, _p8.id, _p8, model.pool)
 						});
 					return A2(
 						_elm_lang$core$Platform_Cmd_ops['!'],
@@ -10175,12 +10202,12 @@ var _user$project$Main$update = F2(
 								model.playlist,
 								A2(
 									_elm_lang$core$Maybe$map,
-									function (_p8) {
+									function (_p9) {
 										return A3(
 											_elm_lang$core$Basics$flip,
 											_user$project$Playlist$update,
 											model.playlist,
-											_user$project$Playlist$RemoveSong(_p8));
+											_user$project$Playlist$RemoveSong(_p9));
 									},
 									id))
 						});
@@ -10204,18 +10231,18 @@ var _user$project$Main$update = F2(
 							{
 								playlist: A2(
 									_user$project$Playlist$update,
-									_user$project$Playlist$ToggleSong(_p6._0),
+									_user$project$Playlist$ToggleSong(_p7._0),
 									model.playlist)
 							}),
 						{ctor: '[]'});
 				case 'UpdatePorts':
 					var mdl = function () {
-						var _p9 = _p6._0;
-						if (_p9.ctor === 'GetItemOperation') {
+						var _p10 = _p7._0;
+						if (_p10.ctor === 'GetItemOperation') {
 							return _elm_lang$core$Native_Utils.update(
 								model,
 								{
-									pool: _user$project$Main$decodePool(_p6._3)
+									pool: _user$project$Main$decodePool(_p7._3)
 								});
 						} else {
 							return model;
@@ -10227,26 +10254,26 @@ var _user$project$Main$update = F2(
 							mdl,
 							{
 								storage: function () {
-									var _p10 = _p6._1;
-									if (_p10.ctor === 'Nothing') {
+									var _p11 = _p7._1;
+									if (_p11.ctor === 'Nothing') {
 										return model.storage;
 									} else {
-										return A2(_billstclair$elm_localstorage$LocalStorage$setPorts, _p10._0, model.storage);
+										return A2(_billstclair$elm_localstorage$LocalStorage$setPorts, _p11._0, model.storage);
 									}
 								}()
 							}),
 						{ctor: '[]'});
 				case 'EditMsg':
-					var _p12 = _p6._0;
-					var newItem = A2(_user$project$Item$update, _p12, model.edited);
-					var _p11 = _p12;
-					if (_p11.ctor === 'Save') {
-						var _v6 = _user$project$Main$Add(_p11._0),
-							_v7 = _elm_lang$core$Native_Utils.update(
+					var _p13 = _p7._0;
+					var newItem = A2(_user$project$Item$update, _p13, model.edited);
+					var _p12 = _p13;
+					if (_p12.ctor === 'Save') {
+						var _v7 = _user$project$Main$Add(_p12._0),
+							_v8 = _elm_lang$core$Native_Utils.update(
 							model,
 							{edited: newItem});
-						msg = _v6;
-						model = _v7;
+						msg = _v7;
+						model = _v8;
 						continue update;
 					} else {
 						return A2(
@@ -10262,21 +10289,21 @@ var _user$project$Main$update = F2(
 						_elm_lang$core$Native_Utils.update(
 							model,
 							{
-								playlist: A2(_user$project$Playlist$update, _p6._0, model.playlist)
+								playlist: A2(_user$project$Playlist$update, _p7._0, model.playlist)
 							}),
 						{ctor: '[]'});
-				case 'Play':
+				default:
 					var current = A2(
 						_user$project$Main$getItem,
 						model,
 						function (_) {
 							return _.id;
 						});
-					var _p13 = {ctor: '_Tuple2', _0: current, _1: model.playing};
-					if (_p13._0.ctor === 'Just') {
-						if (_p13._1.ctor === 'Just') {
-							var _p14 = _p13._0._0;
-							return _elm_lang$core$Native_Utils.eq(_p14, _p13._1._0) ? A2(
+					var _p14 = {ctor: '_Tuple2', _0: current, _1: model.playing};
+					if (_p14._0.ctor === 'Just') {
+						if (_p14._1.ctor === 'Just') {
+							var _p15 = _p14._0._0;
+							return _elm_lang$core$Native_Utils.eq(_p15, _p14._1._0) ? A2(
 								_elm_lang$core$Platform_Cmd_ops['!'],
 								_elm_lang$core$Native_Utils.update(
 									model,
@@ -10290,7 +10317,7 @@ var _user$project$Main$update = F2(
 								_elm_lang$core$Native_Utils.update(
 									model,
 									{
-										playing: _elm_lang$core$Maybe$Just(_p14)
+										playing: _elm_lang$core$Maybe$Just(_p15)
 									}),
 								{
 									ctor: '::',
@@ -10303,7 +10330,7 @@ var _user$project$Main$update = F2(
 								_elm_lang$core$Native_Utils.update(
 									model,
 									{
-										playing: _elm_lang$core$Maybe$Just(_p13._0._0)
+										playing: _elm_lang$core$Maybe$Just(_p14._0._0)
 									}),
 								{
 									ctor: '::',
@@ -10317,11 +10344,6 @@ var _user$project$Main$update = F2(
 							model,
 							{ctor: '[]'});
 					}
-				default:
-					return A2(
-						_elm_lang$core$Platform_Cmd_ops['!'],
-						model,
-						{ctor: '[]'});
 			}
 		}
 	});

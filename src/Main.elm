@@ -89,14 +89,13 @@ type Msg
     | EditMsg Item.Msg
     | PlaylistMsg Playlist.Msg
     | UpdatePorts LSST.Operation (Maybe (LSST.Ports Msg)) LSST.Key LSST.Value
-    | PlaylistSwitch String
 
 
 getItem : Model -> (ValidItem -> b) -> Maybe b
 getItem model getter =
     model.playlist
         |> Playlist.current
-        |> List.head
+        |> Maybe.andThen List.head
         |> Maybe.andThen
             (flip Dict.get model.pool)
         |> Maybe.map getter
@@ -168,6 +167,7 @@ update msg model =
                     { model | edited = newItem } ! []
 
         PlaylistMsg iMsg ->
+            --        TODO : reset playing when switching playlist
             { model | playlist = Playlist.update iMsg model.playlist } ! []
 
         Play ->
@@ -187,10 +187,6 @@ update msg model =
 
                 ( Nothing, _ ) ->
                     model ! []
-
-        --        TODO : reset playing when switching playlist
-        PlaylistSwitch p ->
-            model ! []
 
 
 listItem : Set String -> ValidItem -> List (Html Msg)
@@ -233,21 +229,26 @@ buttons model =
 view : Model -> Html Msg
 view model =
     let
-        current =
-            model.playlist |> Playlist.current |> Set.fromList
+        playlistControls =
+            [ Playlist.adder model.playlist |> H.map PlaylistMsg
+            , Playlist.lister model.playlist |> H.map PlaylistMsg
+            ]
     in
     H.div [] <|
-        List.concat
-            [ [ Playlist.adder model.playlist |> H.map PlaylistMsg
-              , Playlist.lister model.playlist |> H.map PlaylistMsg
-              ]
-            , buttons model
-            , [ H.map EditMsg (Item.view model.edited)
-              , H.div []
-                    (Dict.values model.pool
-                        |> List.sortBy .name
-                        |> List.map (listItem current)
-                        |> List.concatMap identity
-                    )
-              ]
-            ]
+        case Playlist.current model.playlist |> Maybe.map Set.fromList of
+            Nothing ->
+                playlistControls
+
+            Just current ->
+                List.concat
+                    [ playlistControls
+                    , buttons model
+                    , [ H.map EditMsg (Item.view model.edited)
+                      , H.div []
+                            (Dict.values model.pool
+                                |> List.sortBy .name
+                                |> List.map (listItem current)
+                                |> List.concatMap identity
+                            )
+                      ]
+                    ]

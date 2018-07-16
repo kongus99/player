@@ -12,16 +12,17 @@ type alias Entry =
 
 
 type alias Playlist =
-    { new : String, selected : String, backlog : Dict String Entry }
+    { new : String, selected : Maybe String, backlog : Dict String Entry }
 
 
 empty =
-    Playlist "" "" Dict.empty
+    Playlist "" Nothing Dict.empty
 
 
-current : Playlist -> List String
+current : Playlist -> Maybe (List String)
 current { selected, backlog } =
-    Dict.get selected backlog |> Maybe.withDefault []
+    selected
+        |> Maybe.andThen (flip Dict.get backlog)
 
 
 type Msg
@@ -37,7 +38,7 @@ update : Msg -> Playlist -> Playlist
 update msg playlist =
     case msg of
         SelectPlaylist p ->
-            { playlist | selected = p }
+            { playlist | selected = Just p }
 
         AddPlaylist ->
             if String.isEmpty playlist.new then
@@ -47,8 +48,8 @@ update msg playlist =
                     | new = ""
                     , backlog = Dict.insert playlist.new [] playlist.backlog
                     , selected =
-                        if playlist.selected == "" then
-                            playlist.new
+                        if playlist.selected == Nothing then
+                            Just playlist.new
                         else
                             playlist.selected
                 }
@@ -58,8 +59,11 @@ update msg playlist =
 
         DeletePlaylist ->
             { playlist
-                | selected = Dict.keys playlist.backlog |> List.head |> Maybe.withDefault ""
-                , backlog = Dict.remove playlist.selected playlist.backlog
+                | selected = Dict.keys playlist.backlog |> List.head
+                , backlog =
+                    playlist.selected
+                        |> Maybe.map (flip Dict.remove playlist.backlog)
+                        |> Maybe.withDefault Dict.empty
             }
 
         ToggleSong p ->
@@ -69,12 +73,20 @@ update msg playlist =
             in
             { playlist
                 | backlog =
-                    (if currentEntry |> List.member p then
-                        List.filter (\e -> not (e == p)) currentEntry
-                     else
-                        List.append currentEntry [ p ]
-                    )
-                        |> flip (Dict.insert playlist.selected) playlist.backlog
+                    case ( currentEntry, playlist.selected ) of
+                        ( Nothing, _ ) ->
+                            playlist.backlog
+
+                        ( _, Nothing ) ->
+                            playlist.backlog
+
+                        ( Just list, Just selected ) ->
+                            (if list |> List.member p then
+                                List.filter (\e -> not (e == p)) list
+                             else
+                                List.append list [ p ]
+                            )
+                                |> flip (Dict.insert selected) playlist.backlog
             }
 
         RemoveSong p ->
@@ -106,7 +118,7 @@ lister playlist =
                     (\n ->
                         H.option
                             [ A.value n
-                            , A.selected (n == playlist.selected)
+                            , A.selected (Just n == playlist.selected)
                             ]
                             [ H.text n ]
                     )
