@@ -1,14 +1,7 @@
-port module Player exposing (Model, Msg(..), elmToPlayer, init)
+port module Player exposing (Model, Msg(..), decode, elmToPlayer, init)
 
 import Array exposing (Array)
 import Item exposing (ValidItem)
-
-
-type Msg
-    = Play (Array ValidItem)
-    | Toggle
-    | StateChange Int
-
 
 
 -- -1 – unstarted
@@ -24,6 +17,12 @@ type State
     | Paused
     | Playing
     | Other
+
+
+type Msg
+    = Play (Array ValidItem)
+    | Toggle
+    | StateChange State
 
 
 type alias Model =
@@ -56,8 +55,8 @@ decode state =
             Other
 
 
-playCmd : Int -> Array ValidItem -> List (Cmd msg)
-playCmd index items =
+playCmd : Model -> List (Cmd msg)
+playCmd { index, items } =
     [ items
         |> Array.get index
         |> Maybe.map .id
@@ -69,8 +68,11 @@ update : Model -> Msg -> ( Model, Cmd msg )
 update model msg =
     case msg of
         Play items ->
-            { model | items = items, index = 0 }
-                ! playCmd 0 items
+            let
+                newModel =
+                    { model | items = items, index = 0 }
+            in
+            newModel ! playCmd newModel
 
         Toggle ->
             case model.state of
@@ -78,26 +80,25 @@ update model msg =
                     { model | state = Paused } ! [ elmToPlayer <| Nothing ]
 
                 Paused ->
-                    { model | state = Playing } ! playCmd model.index model.items
+                    { model | state = Playing } ! playCmd model
 
                 _ ->
                     model ! []
 
         StateChange state ->
-            let
-                newModel =
-                    { model | state = decode state }
-            in
-            case newModel.state of
+            case state of
                 Ended ->
                     let
-                        index =
-                            (newModel.index + 1) % Array.length newModel.items
+                        newModel =
+                            { model
+                                | state = state
+                                , index = (model.index + 1) % Array.length model.items
+                            }
                     in
-                    { model | index = index } ! playCmd index model.items
+                    newModel ! playCmd newModel
 
                 _ ->
-                    newModel ! []
+                    { model | state = state } ! []
 
 
 port elmToPlayer : Maybe String -> Cmd msg
