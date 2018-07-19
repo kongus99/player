@@ -1,6 +1,12 @@
-module Playlist exposing (Msg(..), Playlist, adder, current, empty, lister, update)
+module Playlist exposing (Msg(..), Playlist, creator, current, empty, isEmpty, selector, update)
 
+import Bootstrap.Button as Button
+import Bootstrap.Form as Form
+import Bootstrap.Form.Input as Input
+import Bootstrap.Form.InputGroup as InputGroup
+import Bootstrap.Form.Select as Select
 import Dict exposing (Dict)
+import FontAwesome as FA
 import Html as H
 import Html.Attributes as A
 import Html.Events as E
@@ -23,6 +29,11 @@ current : Playlist -> Maybe (List String)
 current { selected, backlog } =
     selected
         |> Maybe.andThen (flip Dict.get backlog)
+
+
+isEmpty : Playlist -> Bool
+isEmpty { backlog } =
+    backlog |> Dict.isEmpty
 
 
 type Msg
@@ -58,12 +69,15 @@ update msg playlist =
             { playlist | new = p }
 
         DeletePlaylist ->
-            { playlist
-                | selected = Dict.keys playlist.backlog |> List.head
-                , backlog =
+            let
+                newBacklog =
                     playlist.selected
                         |> Maybe.map (flip Dict.remove playlist.backlog)
                         |> Maybe.withDefault Dict.empty
+            in
+            { playlist
+                | selected = Dict.keys newBacklog |> List.head
+                , backlog = newBacklog
             }
 
         ToggleSong p ->
@@ -97,31 +111,40 @@ update msg playlist =
             }
 
 
-adder playlist =
-    H.div []
-        [ H.input
-            [ A.placeholder "Name"
-            , E.onInput EditPlaylist
-            , A.value playlist.new
+creator playlist =
+    Form.form []
+        [ Form.group []
+            [ InputGroup.config
+                (InputGroup.text [ Input.placeholder "Name", Input.onInput EditPlaylist, Input.value playlist.new ])
+                |> InputGroup.successors
+                    [ InputGroup.button [ Button.secondary, Button.onClick AddPlaylist ] [ FA.icon FA.save ] ]
+                |> InputGroup.view
             ]
-            [ H.text playlist.new ]
-        , H.button [ E.onClick <| AddPlaylist ] [ H.text "Add" ]
+        , Form.group []
+            [ H.div [ A.class "input-group" ]
+                [ selector playlist
+                , H.div [ A.class "input-group-append" ]
+                    [ Button.button
+                        [ Button.onClick <| DeletePlaylist
+                        , Button.secondary
+                        ]
+                        [ FA.icon FA.trash ]
+                    ]
+                ]
+            ]
         ]
 
 
-lister playlist =
-    H.div []
-        [ H.select [ E.onInput SelectPlaylist ]
-            (Dict.keys playlist.backlog
-                |> List.sort
-                |> List.map
-                    (\n ->
-                        H.option
-                            [ A.value n
-                            , A.selected (Just n == playlist.selected)
-                            ]
-                            [ H.text n ]
-                    )
-            )
-        , H.button [ E.onClick <| DeletePlaylist ] [ H.text "Remove" ]
-        ]
+selector playlist =
+    H.select [ E.onInput SelectPlaylist, A.class "custom-select" ]
+        (Dict.keys playlist.backlog
+            |> List.sort
+            |> List.map
+                (\n ->
+                    H.option
+                        [ A.value n
+                        , A.selected (Just n == playlist.selected)
+                        ]
+                        [ H.text n ]
+                )
+        )

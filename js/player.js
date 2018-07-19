@@ -4,8 +4,8 @@ class Player {
     this.clipId = clipId;
     this.watcher = watcher;
     this.current = new YT.Player(this.domId, {
-      height: '480',
-      width: '640',
+      height: '1',
+      width: '1',
       videoId: this.clipId,
       events: {
         'onReady': (event) => {

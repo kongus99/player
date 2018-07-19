@@ -1,7 +1,11 @@
 module Main exposing (..)
 
 import Array exposing (Array)
+import Bootstrap.Button as Button
+import Bootstrap.CDN as CDN
+import Bootstrap.Grid as Grid
 import Dict exposing (Dict)
+import FontAwesome as FA
 import Html as H exposing (Html)
 import Html.Attributes as A
 import Html.Events as E
@@ -10,6 +14,7 @@ import Json.Decode as Dec
 import Json.Encode as Enc
 import LocalStorage exposing (LocalStorage)
 import LocalStorage.SharedTypes as LSST
+import MyModal
 import Player
 import Playlist exposing (Playlist)
 import Set exposing (Set)
@@ -19,12 +24,18 @@ import Storage as St
 ---MODEL
 
 
+type ModalType
+    = Playlist
+
+
 type alias Model =
     { pool : Dict String ValidItem
     , playlist : Playlist
     , playing : Maybe String
     , edited : Item.Model
     , player : Player.Model
+    , myModalType : ModalType
+    , myModal : MyModal.Model
     , storage : LocalStorage Msg
     }
 
@@ -57,7 +68,6 @@ decodePool value =
             Dict.empty
 
 
-main : Program Never Model Msg
 main =
     H.program
         { init = init
@@ -67,7 +77,6 @@ main =
         }
 
 
-init : ( Model, Cmd Msg )
 init =
     let
         mdl =
@@ -76,6 +85,8 @@ init =
                 Nothing
                 Item.init
                 Player.init
+                Playlist
+                MyModal.init
                 St.init
     in
     mdl ! [ St.get "playlist" mdl ]
@@ -89,9 +100,9 @@ type Msg
     | EditMsg Item.Msg
     | PlaylistMsg Playlist.Msg
     | UpdatePorts LSST.Operation (Maybe (LSST.Ports Msg)) LSST.Key LSST.Value
+    | ModalMsg (MyModal.Msg Msg)
 
 
-getItem : Model -> (ValidItem -> b) -> Maybe b
 getItem model getter =
     model.playlist
         |> Playlist.current
@@ -101,7 +112,6 @@ getItem model getter =
         |> Maybe.map getter
 
 
-update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         Add item ->
@@ -188,6 +198,14 @@ update msg model =
                 ( Nothing, _ ) ->
                     model ! []
 
+        ModalMsg mMsg ->
+            case mMsg of
+                MyModal.UpdateModal m ->
+                    update m model
+
+                _ ->
+                    { model | myModal = MyModal.update mMsg model.myModal } ! []
+
 
 listItem : Set String -> ValidItem -> List (Html Msg)
 listItem current item =
@@ -206,7 +224,6 @@ listItem current item =
     ]
 
 
-buttons : Model -> List (Html Msg)
 buttons model =
     let
         maybeItem =
@@ -226,29 +243,37 @@ buttons model =
         |> Maybe.withDefault []
 
 
-view : Model -> Html Msg
 view model =
     let
         playlistControls =
-            [ Playlist.adder model.playlist |> H.map PlaylistMsg
-            , Playlist.lister model.playlist |> H.map PlaylistMsg
-            ]
+            H.div [ A.class "input-group" ]
+                [ H.div [ A.class "input-group-prepend" ]
+                    [ H.map ModalMsg <| MyModal.trigger FA.list "Add/Remove Playlist" ]
+                , if Playlist.isEmpty model.playlist then
+                    H.div [] []
+                  else
+                    Playlist.selector model.playlist |> H.map PlaylistMsg
+                ]
     in
-    H.div [] <|
-        case Playlist.current model.playlist |> Maybe.map Set.fromList of
-            Nothing ->
-                playlistControls
+    Grid.container [] <|
+        CDN.stylesheet
+            :: FA.useCss
+            :: playlistControls
+            :: (H.map ModalMsg <| MyModal.contents (Playlist.creator model.playlist |> H.map PlaylistMsg) model.myModal)
+            :: (case Playlist.current model.playlist |> Maybe.map Set.fromList of
+                    Nothing ->
+                        []
 
-            Just current ->
-                List.concat
-                    [ playlistControls
-                    , buttons model
-                    , [ H.map EditMsg (Item.view model.edited)
-                      , H.div []
-                            (Dict.values model.pool
-                                |> List.sortBy .name
-                                |> List.map (listItem current)
-                                |> List.concatMap identity
-                            )
-                      ]
-                    ]
+                    Just current ->
+                        List.concat
+                            [ buttons model
+                            , [ H.map EditMsg (Item.view model.edited)
+                              , H.div []
+                                    (Dict.values model.pool
+                                        |> List.sortBy .name
+                                        |> List.map (listItem current)
+                                        |> List.concatMap identity
+                                    )
+                              ]
+                            ]
+               )
