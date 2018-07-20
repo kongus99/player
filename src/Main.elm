@@ -2,8 +2,13 @@ module Main exposing (..)
 
 import Array exposing (Array)
 import Bootstrap.Button as Button
+import Bootstrap.ButtonGroup as ButtonGroup
 import Bootstrap.CDN as CDN
+import Bootstrap.Form.Input as Input
+import Bootstrap.Form.InputGroup as InputGroup
 import Bootstrap.Grid as Grid
+import Bootstrap.ListGroup as ListGroup
+import Bootstrap.Progress as Progress
 import Dict exposing (Dict)
 import FontAwesome as FA
 import Html as H exposing (Html)
@@ -201,40 +206,45 @@ update msg model =
                     { model | myModal = MyModal.update mMsg model.myModal } ! []
 
 
-listItem : Set String -> Item -> List (Html Msg)
 listItem current item =
     case item.id of
         Nothing ->
             []
 
         Just id ->
-            [ H.div []
-                [ H.input
-                    [ A.type_ "checkbox"
-                    , A.id item.url
-                    , A.name "playlist_item"
-                    , A.value item.name
-                    , A.checked (Set.member id current)
-                    , E.onClick (Select id)
-                    ]
-                    []
-                , H.label [ A.for item.url ] [ H.text item.name ]
-                ]
+            [ ListGroup.button
+                (List.append
+                    (if Set.member id current then
+                        [ ListGroup.secondary, ListGroup.active ]
+                     else
+                        []
+                    )
+                    [ ListGroup.attrs [ E.onClick (Select id) ] ]
+                )
+                [ H.text item.name ]
             ]
+
+
+player item =
+    [ Progress.progress
+        [ Progress.label item.name
+        , Progress.value 100
+        , Progress.wrapperAttrs
+            [ A.style [ ( "fontSize", "28px" ), ( "height", "50px" ) ]
+            ]
+        ]
+    , ButtonGroup.linkButtonGroup
+        [ ButtonGroup.small ]
+        [ ButtonGroup.linkButton [ Button.primary, Button.onClick Play ] [ H.text "Play" ]
+        , ButtonGroup.linkButton [ Button.secondary, Button.onClick Remove ] [ H.text "Remove" ]
+        , ButtonGroup.linkButton [ Button.secondary, Button.attrs [ A.href item.url, A.target "_blank" ] ] [ H.text "Link" ]
+        ]
+    ]
 
 
 buttons model =
     getItem model Just
-        |> Maybe.map
-            (\item ->
-                [ H.button [ E.onClick Remove ]
-                    [ H.text "Remove" ]
-                , H.button [ E.onClick Play ]
-                    [ H.text "Play" ]
-                , H.a [ A.href item.url, A.target "_blank" ]
-                    [ H.text item.name ]
-                ]
-            )
+        |> Maybe.map player
         |> Maybe.withDefault []
 
 
@@ -277,7 +287,7 @@ view model =
                     Just current ->
                         List.concat
                             [ buttons model
-                            , [ H.div []
+                            , [ ListGroup.custom
                                     (Dict.values model.pool
                                         |> List.sortBy .name
                                         |> List.map (listItem current)

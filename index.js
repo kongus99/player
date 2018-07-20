@@ -16166,6 +16166,129 @@ var _rundis$elm_bootstrap$Bootstrap_Internal_Role$Success = {ctor: 'Success'};
 var _rundis$elm_bootstrap$Bootstrap_Internal_Role$Secondary = {ctor: 'Secondary'};
 var _rundis$elm_bootstrap$Bootstrap_Internal_Role$Primary = {ctor: 'Primary'};
 
+var _rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$itemAttributes = function (options) {
+	return A2(
+		_elm_lang$core$Basics_ops['++'],
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$classList(
+				{
+					ctor: '::',
+					_0: {ctor: '_Tuple2', _0: 'list-group-item', _1: true},
+					_1: {
+						ctor: '::',
+						_0: {ctor: '_Tuple2', _0: 'disabled', _1: options.disabled},
+						_1: {
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: 'active', _1: options.active},
+							_1: {
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: 'list-group-item-action', _1: options.action},
+								_1: {ctor: '[]'}
+							}
+						}
+					}
+				}),
+			_1: {ctor: '[]'}
+		},
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$disabled(options.disabled),
+				_1: {ctor: '[]'}
+			},
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				A2(
+					_elm_lang$core$Maybe$withDefault,
+					{ctor: '[]'},
+					A2(
+						_elm_lang$core$Maybe$map,
+						function (r) {
+							return {
+								ctor: '::',
+								_0: A2(_rundis$elm_bootstrap$Bootstrap_Internal_Role$toClass, 'list-group-item', r),
+								_1: {ctor: '[]'}
+							};
+						},
+						options.role)),
+				options.attributes)));
+};
+var _rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$preventClick = A2(_elm_lang$html$Html_Attributes$attribute, 'onclick', 'var event = arguments[0] || window.event; event.preventDefault();');
+var _rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$applyModifier = F2(
+	function (modifier, options) {
+		var _p0 = modifier;
+		switch (_p0.ctor) {
+			case 'Roled':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						role: _elm_lang$core$Maybe$Just(_p0._0)
+					});
+			case 'Action':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{action: true});
+			case 'Disabled':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{disabled: true});
+			case 'Active':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{active: true});
+			default:
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						attributes: A2(_elm_lang$core$Basics_ops['++'], options.attributes, _p0._0)
+					});
+		}
+	});
+var _rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$defaultOptions = {
+	role: _elm_lang$core$Maybe$Nothing,
+	active: false,
+	disabled: false,
+	action: false,
+	attributes: {ctor: '[]'}
+};
+var _rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$renderCustomItem = function (_p1) {
+	var _p2 = _p1;
+	return A2(
+		_p2._0.itemFn,
+		_rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$itemAttributes(
+			A3(_elm_lang$core$List$foldl, _rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$applyModifier, _rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$defaultOptions, _p2._0.options)),
+		_p2._0.children);
+};
+var _rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$renderItem = function (_p3) {
+	var _p4 = _p3;
+	return A2(
+		_p4._0.itemFn,
+		_rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$itemAttributes(
+			A3(_elm_lang$core$List$foldl, _rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$applyModifier, _rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$defaultOptions, _p4._0.options)),
+		_p4._0.children);
+};
+var _rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$ItemOptions = F5(
+	function (a, b, c, d, e) {
+		return {role: a, active: b, disabled: c, action: d, attributes: e};
+	});
+var _rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$Attrs = function (a) {
+	return {ctor: 'Attrs', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$Action = {ctor: 'Action'};
+var _rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$Disabled = {ctor: 'Disabled'};
+var _rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$Active = {ctor: 'Active'};
+var _rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$Roled = function (a) {
+	return {ctor: 'Roled', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$Item = function (a) {
+	return {ctor: 'Item', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$CustomItem = function (a) {
+	return {ctor: 'CustomItem', _0: a};
+};
+
 var _rundis$elm_bootstrap$Bootstrap_General_Internal$screenSizeOption = function (size) {
 	var _p0 = size;
 	switch (_p0.ctor) {
@@ -16322,6 +16445,139 @@ var _rundis$elm_bootstrap$Bootstrap_Text$alignXs = function (dir) {
 var _rundis$elm_bootstrap$Bootstrap_Text$alignXsRight = _rundis$elm_bootstrap$Bootstrap_Text$alignXs(_rundis$elm_bootstrap$Bootstrap_Internal_Text$Right);
 var _rundis$elm_bootstrap$Bootstrap_Text$alignXsCenter = _rundis$elm_bootstrap$Bootstrap_Text$alignXs(_rundis$elm_bootstrap$Bootstrap_Internal_Text$Center);
 var _rundis$elm_bootstrap$Bootstrap_Text$alignXsLeft = _rundis$elm_bootstrap$Bootstrap_Text$alignXs(_rundis$elm_bootstrap$Bootstrap_Internal_Text$Left);
+
+var _rundis$elm_bootstrap$Bootstrap_ListGroup$attrs = function (attrs) {
+	return _rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$Attrs(attrs);
+};
+var _rundis$elm_bootstrap$Bootstrap_ListGroup$disabled = _rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$Disabled;
+var _rundis$elm_bootstrap$Bootstrap_ListGroup$active = _rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$Active;
+var _rundis$elm_bootstrap$Bootstrap_ListGroup$dark = _rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$Roled(_rundis$elm_bootstrap$Bootstrap_Internal_Role$Dark);
+var _rundis$elm_bootstrap$Bootstrap_ListGroup$light = _rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$Roled(_rundis$elm_bootstrap$Bootstrap_Internal_Role$Light);
+var _rundis$elm_bootstrap$Bootstrap_ListGroup$danger = _rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$Roled(_rundis$elm_bootstrap$Bootstrap_Internal_Role$Danger);
+var _rundis$elm_bootstrap$Bootstrap_ListGroup$warning = _rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$Roled(_rundis$elm_bootstrap$Bootstrap_Internal_Role$Warning);
+var _rundis$elm_bootstrap$Bootstrap_ListGroup$info = _rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$Roled(_rundis$elm_bootstrap$Bootstrap_Internal_Role$Info);
+var _rundis$elm_bootstrap$Bootstrap_ListGroup$success = _rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$Roled(_rundis$elm_bootstrap$Bootstrap_Internal_Role$Success);
+var _rundis$elm_bootstrap$Bootstrap_ListGroup$secondary = _rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$Roled(_rundis$elm_bootstrap$Bootstrap_Internal_Role$Secondary);
+var _rundis$elm_bootstrap$Bootstrap_ListGroup$primary = _rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$Roled(_rundis$elm_bootstrap$Bootstrap_Internal_Role$Primary);
+var _rundis$elm_bootstrap$Bootstrap_ListGroup$button = F2(
+	function (options, children) {
+		return _rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$CustomItem(
+			{
+				itemFn: _elm_lang$html$Html$button,
+				children: children,
+				options: {
+					ctor: '::',
+					_0: _rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$Action,
+					_1: A2(
+						_elm_lang$core$Basics_ops['++'],
+						options,
+						{
+							ctor: '::',
+							_0: _rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$Attrs(
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html_Attributes$type_('button'),
+									_1: {ctor: '[]'}
+								}),
+							_1: {ctor: '[]'}
+						})
+				}
+			});
+	});
+var _rundis$elm_bootstrap$Bootstrap_ListGroup$anchor = F2(
+	function (options, children) {
+		var updOptions = A2(
+			_elm_lang$core$List$any,
+			F2(
+				function (x, y) {
+					return _elm_lang$core$Native_Utils.eq(x, y);
+				})(_rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$Disabled),
+			options) ? A2(
+			_elm_lang$core$Basics_ops['++'],
+			options,
+			{
+				ctor: '::',
+				_0: _rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$Attrs(
+					{
+						ctor: '::',
+						_0: _rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$preventClick,
+						_1: {ctor: '[]'}
+					}),
+				_1: {ctor: '[]'}
+			}) : options;
+		return _rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$CustomItem(
+			{
+				itemFn: _elm_lang$html$Html$a,
+				children: children,
+				options: {ctor: '::', _0: _rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$Action, _1: updOptions}
+			});
+	});
+var _rundis$elm_bootstrap$Bootstrap_ListGroup$keyedCustom = function (items) {
+	return A3(
+		_elm_lang$html$Html_Keyed$node,
+		'div',
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$class('list-group'),
+			_1: {ctor: '[]'}
+		},
+		A2(
+			_elm_lang$core$List$map,
+			function (_p0) {
+				var _p1 = _p0;
+				return {
+					ctor: '_Tuple2',
+					_0: _p1._0,
+					_1: _rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$renderCustomItem(_p1._1)
+				};
+			},
+			items));
+};
+var _rundis$elm_bootstrap$Bootstrap_ListGroup$custom = function (items) {
+	return A2(
+		_elm_lang$html$Html$div,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$class('list-group'),
+			_1: {ctor: '[]'}
+		},
+		A2(_elm_lang$core$List$map, _rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$renderCustomItem, items));
+};
+var _rundis$elm_bootstrap$Bootstrap_ListGroup$li = F2(
+	function (options, children) {
+		return _rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$Item(
+			{itemFn: _elm_lang$html$Html$li, children: children, options: options});
+	});
+var _rundis$elm_bootstrap$Bootstrap_ListGroup$keyedUl = function (keyedItems) {
+	return A2(
+		_elm_lang$html$Html_Keyed$ul,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$class('list-group'),
+			_1: {ctor: '[]'}
+		},
+		A2(
+			_elm_lang$core$List$map,
+			function (_p2) {
+				var _p3 = _p2;
+				return {
+					ctor: '_Tuple2',
+					_0: _p3._0,
+					_1: _rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$renderItem(_p3._1)
+				};
+			},
+			keyedItems));
+};
+var _rundis$elm_bootstrap$Bootstrap_ListGroup$ul = function (items) {
+	return A2(
+		_elm_lang$html$Html$ul,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$class('list-group'),
+			_1: {ctor: '[]'}
+		},
+		A2(_elm_lang$core$List$map, _rundis$elm_bootstrap$Bootstrap_Internal_ListGroup$renderItem, items));
+};
 
 var _rundis$elm_bootstrap$Bootstrap_Internal_Button$roleClass = function (role) {
 	var _p0 = role;
@@ -16641,6 +16897,232 @@ var _rundis$elm_bootstrap$Bootstrap_Button$button = F2(
 			_elm_lang$html$Html$button,
 			_rundis$elm_bootstrap$Bootstrap_Internal_Button$buttonAttributes(options),
 			children);
+	});
+
+var _rundis$elm_bootstrap$Bootstrap_ButtonGroup$defaultOptions = {
+	size: _elm_lang$core$Maybe$Nothing,
+	vertical: false,
+	attributes: {ctor: '[]'}
+};
+var _rundis$elm_bootstrap$Bootstrap_ButtonGroup$applyModifier = F2(
+	function (modifier, options) {
+		var _p0 = modifier;
+		switch (_p0.ctor) {
+			case 'Size':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						size: _elm_lang$core$Maybe$Just(_p0._0)
+					});
+			case 'Vertical':
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{vertical: true});
+			default:
+				return _elm_lang$core$Native_Utils.update(
+					options,
+					{
+						attributes: A2(_elm_lang$core$Basics_ops['++'], options.attributes, _p0._0)
+					});
+		}
+	});
+var _rundis$elm_bootstrap$Bootstrap_ButtonGroup$groupAttributes = F2(
+	function (toggle, modifiers) {
+		var options = A3(_elm_lang$core$List$foldl, _rundis$elm_bootstrap$Bootstrap_ButtonGroup$applyModifier, _rundis$elm_bootstrap$Bootstrap_ButtonGroup$defaultOptions, modifiers);
+		return A2(
+			_elm_lang$core$Basics_ops['++'],
+			{
+				ctor: '::',
+				_0: A2(_elm_lang$html$Html_Attributes$attribute, 'role', 'group'),
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$classList(
+						{
+							ctor: '::',
+							_0: {ctor: '_Tuple2', _0: 'btn-group', _1: true},
+							_1: {
+								ctor: '::',
+								_0: {ctor: '_Tuple2', _0: 'btn-group-toggle', _1: toggle},
+								_1: {
+									ctor: '::',
+									_0: {ctor: '_Tuple2', _0: 'btn-group-vertical', _1: options.vertical},
+									_1: {ctor: '[]'}
+								}
+							}
+						}),
+					_1: {
+						ctor: '::',
+						_0: A2(_elm_lang$html$Html_Attributes$attribute, 'data-toggle', 'buttons'),
+						_1: {ctor: '[]'}
+					}
+				}
+			},
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				function () {
+					var _p1 = A2(_elm_lang$core$Maybe$andThen, _rundis$elm_bootstrap$Bootstrap_General_Internal$screenSizeOption, options.size);
+					if (_p1.ctor === 'Just') {
+						return {
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$class(
+								A2(_elm_lang$core$Basics_ops['++'], 'btn-group-', _p1._0)),
+							_1: {ctor: '[]'}
+						};
+					} else {
+						return {ctor: '[]'};
+					}
+				}(),
+				options.attributes));
+	});
+var _rundis$elm_bootstrap$Bootstrap_ButtonGroup$renderGroup = function (_p2) {
+	var _p3 = _p2;
+	return _p3._0;
+};
+var _rundis$elm_bootstrap$Bootstrap_ButtonGroup$toolbar = F2(
+	function (attributes, items) {
+		return A2(
+			_elm_lang$html$Html$div,
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				{
+					ctor: '::',
+					_0: A2(_elm_lang$html$Html_Attributes$attribute, 'role', 'toolbar'),
+					_1: {
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$class('btn-toolbar'),
+						_1: {ctor: '[]'}
+					}
+				},
+				attributes),
+			A2(_elm_lang$core$List$map, _rundis$elm_bootstrap$Bootstrap_ButtonGroup$renderGroup, items));
+	});
+var _rundis$elm_bootstrap$Bootstrap_ButtonGroup$Options = F3(
+	function (a, b, c) {
+		return {size: a, vertical: b, attributes: c};
+	});
+var _rundis$elm_bootstrap$Bootstrap_ButtonGroup$Attrs = function (a) {
+	return {ctor: 'Attrs', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_ButtonGroup$attrs = function (attrs) {
+	return _rundis$elm_bootstrap$Bootstrap_ButtonGroup$Attrs(attrs);
+};
+var _rundis$elm_bootstrap$Bootstrap_ButtonGroup$Vertical = {ctor: 'Vertical'};
+var _rundis$elm_bootstrap$Bootstrap_ButtonGroup$vertical = _rundis$elm_bootstrap$Bootstrap_ButtonGroup$Vertical;
+var _rundis$elm_bootstrap$Bootstrap_ButtonGroup$Size = function (a) {
+	return {ctor: 'Size', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_ButtonGroup$small = _rundis$elm_bootstrap$Bootstrap_ButtonGroup$Size(_rundis$elm_bootstrap$Bootstrap_General_Internal$SM);
+var _rundis$elm_bootstrap$Bootstrap_ButtonGroup$large = _rundis$elm_bootstrap$Bootstrap_ButtonGroup$Size(_rundis$elm_bootstrap$Bootstrap_General_Internal$LG);
+var _rundis$elm_bootstrap$Bootstrap_ButtonGroup$GroupItem = function (a) {
+	return {ctor: 'GroupItem', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_ButtonGroup$buttonGroupItem = F2(
+	function (options, items) {
+		return _rundis$elm_bootstrap$Bootstrap_ButtonGroup$GroupItem(
+			A2(
+				_elm_lang$html$Html$div,
+				A2(_rundis$elm_bootstrap$Bootstrap_ButtonGroup$groupAttributes, false, options),
+				A2(
+					_elm_lang$core$List$map,
+					function (_p4) {
+						var _p5 = _p4;
+						return _p5._0;
+					},
+					items)));
+	});
+var _rundis$elm_bootstrap$Bootstrap_ButtonGroup$buttonGroup = F2(
+	function (options, items) {
+		return _rundis$elm_bootstrap$Bootstrap_ButtonGroup$renderGroup(
+			A2(_rundis$elm_bootstrap$Bootstrap_ButtonGroup$buttonGroupItem, options, items));
+	});
+var _rundis$elm_bootstrap$Bootstrap_ButtonGroup$linkButtonGroupItem = F2(
+	function (options, items) {
+		return _rundis$elm_bootstrap$Bootstrap_ButtonGroup$GroupItem(
+			A2(
+				_elm_lang$html$Html$div,
+				A2(_rundis$elm_bootstrap$Bootstrap_ButtonGroup$groupAttributes, false, options),
+				A2(
+					_elm_lang$core$List$map,
+					function (_p6) {
+						var _p7 = _p6;
+						return _p7._0;
+					},
+					items)));
+	});
+var _rundis$elm_bootstrap$Bootstrap_ButtonGroup$linkButtonGroup = F2(
+	function (options, items) {
+		return _rundis$elm_bootstrap$Bootstrap_ButtonGroup$renderGroup(
+			A2(_rundis$elm_bootstrap$Bootstrap_ButtonGroup$linkButtonGroupItem, options, items));
+	});
+var _rundis$elm_bootstrap$Bootstrap_ButtonGroup$radioButtonGroupItem = F2(
+	function (options, items) {
+		return _rundis$elm_bootstrap$Bootstrap_ButtonGroup$GroupItem(
+			A2(
+				_elm_lang$html$Html$div,
+				A2(_rundis$elm_bootstrap$Bootstrap_ButtonGroup$groupAttributes, true, options),
+				A2(
+					_elm_lang$core$List$map,
+					function (_p8) {
+						var _p9 = _p8;
+						return _p9._0;
+					},
+					items)));
+	});
+var _rundis$elm_bootstrap$Bootstrap_ButtonGroup$radioButtonGroup = F2(
+	function (options, items) {
+		return _rundis$elm_bootstrap$Bootstrap_ButtonGroup$renderGroup(
+			A2(_rundis$elm_bootstrap$Bootstrap_ButtonGroup$radioButtonGroupItem, options, items));
+	});
+var _rundis$elm_bootstrap$Bootstrap_ButtonGroup$checkboxButtonGroupItem = F2(
+	function (options, items) {
+		return _rundis$elm_bootstrap$Bootstrap_ButtonGroup$GroupItem(
+			A2(
+				_elm_lang$html$Html$div,
+				A2(_rundis$elm_bootstrap$Bootstrap_ButtonGroup$groupAttributes, true, options),
+				A2(
+					_elm_lang$core$List$map,
+					function (_p10) {
+						var _p11 = _p10;
+						return _p11._0;
+					},
+					items)));
+	});
+var _rundis$elm_bootstrap$Bootstrap_ButtonGroup$checkboxButtonGroup = F2(
+	function (options, items) {
+		return _rundis$elm_bootstrap$Bootstrap_ButtonGroup$renderGroup(
+			A2(_rundis$elm_bootstrap$Bootstrap_ButtonGroup$checkboxButtonGroupItem, options, items));
+	});
+var _rundis$elm_bootstrap$Bootstrap_ButtonGroup$ButtonItem = function (a) {
+	return {ctor: 'ButtonItem', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_ButtonGroup$button = F2(
+	function (options, children) {
+		return _rundis$elm_bootstrap$Bootstrap_ButtonGroup$ButtonItem(
+			A2(_rundis$elm_bootstrap$Bootstrap_Button$button, options, children));
+	});
+var _rundis$elm_bootstrap$Bootstrap_ButtonGroup$LinkButtonItem = function (a) {
+	return {ctor: 'LinkButtonItem', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_ButtonGroup$linkButton = F2(
+	function (options, children) {
+		return _rundis$elm_bootstrap$Bootstrap_ButtonGroup$LinkButtonItem(
+			A2(_rundis$elm_bootstrap$Bootstrap_Button$linkButton, options, children));
+	});
+var _rundis$elm_bootstrap$Bootstrap_ButtonGroup$RadioButtonItem = function (a) {
+	return {ctor: 'RadioButtonItem', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_ButtonGroup$radioButton = F3(
+	function (checked, options, children) {
+		return _rundis$elm_bootstrap$Bootstrap_ButtonGroup$RadioButtonItem(
+			A3(_rundis$elm_bootstrap$Bootstrap_Button$radioButton, checked, options, children));
+	});
+var _rundis$elm_bootstrap$Bootstrap_ButtonGroup$CheckboxButtonItem = function (a) {
+	return {ctor: 'CheckboxButtonItem', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_ButtonGroup$checkboxButton = F3(
+	function (checked, options, children) {
+		return _rundis$elm_bootstrap$Bootstrap_ButtonGroup$CheckboxButtonItem(
+			A3(_rundis$elm_bootstrap$Bootstrap_Button$checkboxButton, checked, options, children));
 	});
 
 var _rundis$elm_bootstrap$Bootstrap_CDN$fontAwesome = A3(
@@ -20564,6 +21046,285 @@ var _rundis$elm_bootstrap$Bootstrap_Modal$footer = F3(
 				}));
 	});
 
+var _rundis$elm_bootstrap$Bootstrap_Progress$roleClass = function (role) {
+	return _elm_lang$html$Html_Attributes$class(
+		function () {
+			var _p0 = role;
+			switch (_p0.ctor) {
+				case 'Success':
+					return 'bg-success';
+				case 'Info':
+					return 'bg-info';
+				case 'Warning':
+					return 'bg-warning';
+				default:
+					return 'bg-danger';
+			}
+		}());
+};
+var _rundis$elm_bootstrap$Bootstrap_Progress$toAttributes = function (_p1) {
+	var _p2 = _p1;
+	var _p5 = _p2._0;
+	return _elm_lang$core$List$concat(
+		{
+			ctor: '::',
+			_0: {
+				ctor: '::',
+				_0: A2(_elm_lang$html$Html_Attributes$attribute, 'role', 'progressbar'),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html_Attributes$attribute,
+						'aria-value-now',
+						_elm_lang$core$Basics$toString(_p5.value)),
+					_1: {
+						ctor: '::',
+						_0: A2(_elm_lang$html$Html_Attributes$attribute, 'aria-valuemin', '0'),
+						_1: {
+							ctor: '::',
+							_0: A2(_elm_lang$html$Html_Attributes$attribute, 'aria-valuemax', '100'),
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$style(
+									{
+										ctor: '::',
+										_0: {
+											ctor: '_Tuple2',
+											_0: 'width',
+											_1: A2(
+												_elm_lang$core$Basics_ops['++'],
+												_elm_lang$core$Basics$toString(_p5.value),
+												'%')
+										},
+										_1: {ctor: '[]'}
+									}),
+								_1: {
+									ctor: '::',
+									_0: _elm_lang$html$Html_Attributes$classList(
+										{
+											ctor: '::',
+											_0: {ctor: '_Tuple2', _0: 'progress-bar', _1: true},
+											_1: {
+												ctor: '::',
+												_0: {ctor: '_Tuple2', _0: 'progress-bar-striped', _1: _p5.striped || _p5.animated},
+												_1: {
+													ctor: '::',
+													_0: {ctor: '_Tuple2', _0: 'progress-bar-animated', _1: _p5.animated},
+													_1: {ctor: '[]'}
+												}
+											}
+										}),
+									_1: {ctor: '[]'}
+								}
+							}
+						}
+					}
+				}
+			},
+			_1: {
+				ctor: '::',
+				_0: function () {
+					var _p3 = _p5.height;
+					if (_p3.ctor === 'Just') {
+						return {
+							ctor: '::',
+							_0: _elm_lang$html$Html_Attributes$style(
+								{
+									ctor: '::',
+									_0: {
+										ctor: '_Tuple2',
+										_0: 'height',
+										_1: A2(
+											_elm_lang$core$Basics_ops['++'],
+											_elm_lang$core$Basics$toString(_p3._0),
+											'px')
+									},
+									_1: {ctor: '[]'}
+								}),
+							_1: {ctor: '[]'}
+						};
+					} else {
+						return {ctor: '[]'};
+					}
+				}(),
+				_1: {
+					ctor: '::',
+					_0: function () {
+						var _p4 = _p5.role;
+						if (_p4.ctor === 'Just') {
+							return {
+								ctor: '::',
+								_0: _rundis$elm_bootstrap$Bootstrap_Progress$roleClass(_p4._0),
+								_1: {ctor: '[]'}
+							};
+						} else {
+							return {ctor: '[]'};
+						}
+					}(),
+					_1: {
+						ctor: '::',
+						_0: _p5.attributes,
+						_1: {ctor: '[]'}
+					}
+				}
+			}
+		});
+};
+var _rundis$elm_bootstrap$Bootstrap_Progress$WrapperAttrs = function (a) {
+	return {ctor: 'WrapperAttrs', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_Progress$wrapperAttrs = function (attrs) {
+	return _rundis$elm_bootstrap$Bootstrap_Progress$WrapperAttrs(attrs);
+};
+var _rundis$elm_bootstrap$Bootstrap_Progress$Attrs = function (a) {
+	return {ctor: 'Attrs', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_Progress$attrs = function (attrs) {
+	return _rundis$elm_bootstrap$Bootstrap_Progress$Attrs(attrs);
+};
+var _rundis$elm_bootstrap$Bootstrap_Progress$Animated = function (a) {
+	return {ctor: 'Animated', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_Progress$animated = _rundis$elm_bootstrap$Bootstrap_Progress$Animated(true);
+var _rundis$elm_bootstrap$Bootstrap_Progress$Striped = function (a) {
+	return {ctor: 'Striped', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_Progress$striped = _rundis$elm_bootstrap$Bootstrap_Progress$Striped(true);
+var _rundis$elm_bootstrap$Bootstrap_Progress$Roled = function (a) {
+	return {ctor: 'Roled', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_Progress$Label = function (a) {
+	return {ctor: 'Label', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_Progress$label = function (text) {
+	return _rundis$elm_bootstrap$Bootstrap_Progress$Label(
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html$text(text),
+			_1: {ctor: '[]'}
+		});
+};
+var _rundis$elm_bootstrap$Bootstrap_Progress$customLabel = function (children) {
+	return _rundis$elm_bootstrap$Bootstrap_Progress$Label(children);
+};
+var _rundis$elm_bootstrap$Bootstrap_Progress$Height = function (a) {
+	return {ctor: 'Height', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_Progress$height = function (height) {
+	return _rundis$elm_bootstrap$Bootstrap_Progress$Height(
+		_elm_lang$core$Maybe$Just(height));
+};
+var _rundis$elm_bootstrap$Bootstrap_Progress$Value = function (a) {
+	return {ctor: 'Value', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_Progress$value = function (val) {
+	return _rundis$elm_bootstrap$Bootstrap_Progress$Value(val);
+};
+var _rundis$elm_bootstrap$Bootstrap_Progress$Danger = {ctor: 'Danger'};
+var _rundis$elm_bootstrap$Bootstrap_Progress$danger = _rundis$elm_bootstrap$Bootstrap_Progress$Roled(
+	_elm_lang$core$Maybe$Just(_rundis$elm_bootstrap$Bootstrap_Progress$Danger));
+var _rundis$elm_bootstrap$Bootstrap_Progress$Warning = {ctor: 'Warning'};
+var _rundis$elm_bootstrap$Bootstrap_Progress$warning = _rundis$elm_bootstrap$Bootstrap_Progress$Roled(
+	_elm_lang$core$Maybe$Just(_rundis$elm_bootstrap$Bootstrap_Progress$Warning));
+var _rundis$elm_bootstrap$Bootstrap_Progress$Info = {ctor: 'Info'};
+var _rundis$elm_bootstrap$Bootstrap_Progress$info = _rundis$elm_bootstrap$Bootstrap_Progress$Roled(
+	_elm_lang$core$Maybe$Just(_rundis$elm_bootstrap$Bootstrap_Progress$Info));
+var _rundis$elm_bootstrap$Bootstrap_Progress$Success = {ctor: 'Success'};
+var _rundis$elm_bootstrap$Bootstrap_Progress$success = _rundis$elm_bootstrap$Bootstrap_Progress$Roled(
+	_elm_lang$core$Maybe$Just(_rundis$elm_bootstrap$Bootstrap_Progress$Success));
+var _rundis$elm_bootstrap$Bootstrap_Progress$Options = function (a) {
+	return {ctor: 'Options', _0: a};
+};
+var _rundis$elm_bootstrap$Bootstrap_Progress$applyOption = F2(
+	function (modifier, _p6) {
+		var _p7 = _p6;
+		var _p9 = _p7._0;
+		return _rundis$elm_bootstrap$Bootstrap_Progress$Options(
+			function () {
+				var _p8 = modifier;
+				switch (_p8.ctor) {
+					case 'Value':
+						return _elm_lang$core$Native_Utils.update(
+							_p9,
+							{value: _p8._0});
+					case 'Height':
+						return _elm_lang$core$Native_Utils.update(
+							_p9,
+							{height: _p8._0});
+					case 'Label':
+						return _elm_lang$core$Native_Utils.update(
+							_p9,
+							{label: _p8._0});
+					case 'Roled':
+						return _elm_lang$core$Native_Utils.update(
+							_p9,
+							{role: _p8._0});
+					case 'Striped':
+						return _elm_lang$core$Native_Utils.update(
+							_p9,
+							{striped: _p8._0});
+					case 'Animated':
+						return _elm_lang$core$Native_Utils.update(
+							_p9,
+							{animated: _p8._0});
+					case 'Attrs':
+						return _elm_lang$core$Native_Utils.update(
+							_p9,
+							{attributes: _p8._0});
+					default:
+						return _elm_lang$core$Native_Utils.update(
+							_p9,
+							{wrapperAttributes: _p8._0});
+				}
+			}());
+	});
+var _rundis$elm_bootstrap$Bootstrap_Progress$defaultOptions = _rundis$elm_bootstrap$Bootstrap_Progress$Options(
+	{
+		value: 0,
+		height: _elm_lang$core$Maybe$Nothing,
+		label: {ctor: '[]'},
+		role: _elm_lang$core$Maybe$Nothing,
+		striped: false,
+		animated: false,
+		attributes: {ctor: '[]'},
+		wrapperAttributes: {ctor: '[]'}
+	});
+var _rundis$elm_bootstrap$Bootstrap_Progress$renderBar = function (modifiers) {
+	var _p10 = A3(_elm_lang$core$List$foldl, _rundis$elm_bootstrap$Bootstrap_Progress$applyOption, _rundis$elm_bootstrap$Bootstrap_Progress$defaultOptions, modifiers);
+	var options = _p10;
+	var opts = _p10._0;
+	return A2(
+		_elm_lang$html$Html$div,
+		_rundis$elm_bootstrap$Bootstrap_Progress$toAttributes(options),
+		opts.label);
+};
+var _rundis$elm_bootstrap$Bootstrap_Progress$progress = function (modifiers) {
+	var _p11 = A3(_elm_lang$core$List$foldl, _rundis$elm_bootstrap$Bootstrap_Progress$applyOption, _rundis$elm_bootstrap$Bootstrap_Progress$defaultOptions, modifiers);
+	var options = _p11._0;
+	return A2(
+		_elm_lang$html$Html$div,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$class('progress'),
+			_1: options.wrapperAttributes
+		},
+		{
+			ctor: '::',
+			_0: _rundis$elm_bootstrap$Bootstrap_Progress$renderBar(modifiers),
+			_1: {ctor: '[]'}
+		});
+};
+var _rundis$elm_bootstrap$Bootstrap_Progress$progressMulti = function (bars) {
+	return A2(
+		_elm_lang$html$Html$div,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$class('progress'),
+			_1: {ctor: '[]'}
+		},
+		A2(_elm_lang$core$List$map, _rundis$elm_bootstrap$Bootstrap_Progress$renderBar, bars));
+};
+
 var _user$project$Item$parseUrl = function (url) {
 	var _p0 = A2(
 		_AIRTucha$pathfinder$Pathfinder$parse,
@@ -21456,56 +22217,33 @@ var _user$project$Main$listItem = F2(
 			return {
 				ctor: '::',
 				_0: A2(
-					_elm_lang$html$Html$div,
-					{ctor: '[]'},
-					{
-						ctor: '::',
-						_0: A2(
-							_elm_lang$html$Html$input,
-							{
-								ctor: '::',
-								_0: _elm_lang$html$Html_Attributes$type_('checkbox'),
-								_1: {
-									ctor: '::',
-									_0: _elm_lang$html$Html_Attributes$id(item.url),
-									_1: {
-										ctor: '::',
-										_0: _elm_lang$html$Html_Attributes$name('playlist_item'),
-										_1: {
-											ctor: '::',
-											_0: _elm_lang$html$Html_Attributes$value(item.name),
-											_1: {
-												ctor: '::',
-												_0: _elm_lang$html$Html_Attributes$checked(
-													A2(_elm_lang$core$Set$member, _p10, current)),
-												_1: {
-													ctor: '::',
-													_0: _elm_lang$html$Html_Events$onClick(
-														_user$project$Main$Select(_p10)),
-													_1: {ctor: '[]'}
-												}
-											}
-										}
-									}
-								}
-							},
-							{ctor: '[]'}),
-						_1: {
+					_rundis$elm_bootstrap$Bootstrap_ListGroup$button,
+					A2(
+						_elm_lang$core$List$append,
+						A2(_elm_lang$core$Set$member, _p10, current) ? {
 							ctor: '::',
-							_0: A2(
-								_elm_lang$html$Html$label,
+							_0: _rundis$elm_bootstrap$Bootstrap_ListGroup$secondary,
+							_1: {
+								ctor: '::',
+								_0: _rundis$elm_bootstrap$Bootstrap_ListGroup$active,
+								_1: {ctor: '[]'}
+							}
+						} : {ctor: '[]'},
+						{
+							ctor: '::',
+							_0: _rundis$elm_bootstrap$Bootstrap_ListGroup$attrs(
 								{
 									ctor: '::',
-									_0: _elm_lang$html$Html_Attributes$for(item.url),
-									_1: {ctor: '[]'}
-								},
-								{
-									ctor: '::',
-									_0: _elm_lang$html$Html$text(item.name),
+									_0: _elm_lang$html$Html_Events$onClick(
+										_user$project$Main$Select(_p10)),
 									_1: {ctor: '[]'}
 								}),
 							_1: {ctor: '[]'}
-						}
+						}),
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html$text(item.name),
+						_1: {ctor: '[]'}
 					}),
 				_1: {ctor: '[]'}
 			};
@@ -21513,64 +22251,124 @@ var _user$project$Main$listItem = F2(
 	});
 var _user$project$Main$Play = {ctor: 'Play'};
 var _user$project$Main$Remove = {ctor: 'Remove'};
+var _user$project$Main$player = function (item) {
+	return {
+		ctor: '::',
+		_0: _rundis$elm_bootstrap$Bootstrap_Progress$progress(
+			{
+				ctor: '::',
+				_0: _rundis$elm_bootstrap$Bootstrap_Progress$label(item.name),
+				_1: {
+					ctor: '::',
+					_0: _rundis$elm_bootstrap$Bootstrap_Progress$value(100),
+					_1: {
+						ctor: '::',
+						_0: _rundis$elm_bootstrap$Bootstrap_Progress$wrapperAttrs(
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$style(
+									{
+										ctor: '::',
+										_0: {ctor: '_Tuple2', _0: 'fontSize', _1: '28px'},
+										_1: {
+											ctor: '::',
+											_0: {ctor: '_Tuple2', _0: 'height', _1: '50px'},
+											_1: {ctor: '[]'}
+										}
+									}),
+								_1: {ctor: '[]'}
+							}),
+						_1: {ctor: '[]'}
+					}
+				}
+			}),
+		_1: {
+			ctor: '::',
+			_0: A2(
+				_rundis$elm_bootstrap$Bootstrap_ButtonGroup$linkButtonGroup,
+				{
+					ctor: '::',
+					_0: _rundis$elm_bootstrap$Bootstrap_ButtonGroup$small,
+					_1: {ctor: '[]'}
+				},
+				{
+					ctor: '::',
+					_0: A2(
+						_rundis$elm_bootstrap$Bootstrap_ButtonGroup$linkButton,
+						{
+							ctor: '::',
+							_0: _rundis$elm_bootstrap$Bootstrap_Button$primary,
+							_1: {
+								ctor: '::',
+								_0: _rundis$elm_bootstrap$Bootstrap_Button$onClick(_user$project$Main$Play),
+								_1: {ctor: '[]'}
+							}
+						},
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html$text('Play'),
+							_1: {ctor: '[]'}
+						}),
+					_1: {
+						ctor: '::',
+						_0: A2(
+							_rundis$elm_bootstrap$Bootstrap_ButtonGroup$linkButton,
+							{
+								ctor: '::',
+								_0: _rundis$elm_bootstrap$Bootstrap_Button$secondary,
+								_1: {
+									ctor: '::',
+									_0: _rundis$elm_bootstrap$Bootstrap_Button$onClick(_user$project$Main$Remove),
+									_1: {ctor: '[]'}
+								}
+							},
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html$text('Remove'),
+								_1: {ctor: '[]'}
+							}),
+						_1: {
+							ctor: '::',
+							_0: A2(
+								_rundis$elm_bootstrap$Bootstrap_ButtonGroup$linkButton,
+								{
+									ctor: '::',
+									_0: _rundis$elm_bootstrap$Bootstrap_Button$secondary,
+									_1: {
+										ctor: '::',
+										_0: _rundis$elm_bootstrap$Bootstrap_Button$attrs(
+											{
+												ctor: '::',
+												_0: _elm_lang$html$Html_Attributes$href(item.url),
+												_1: {
+													ctor: '::',
+													_0: _elm_lang$html$Html_Attributes$target('_blank'),
+													_1: {ctor: '[]'}
+												}
+											}),
+										_1: {ctor: '[]'}
+									}
+								},
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html$text('Link'),
+									_1: {ctor: '[]'}
+								}),
+							_1: {ctor: '[]'}
+						}
+					}
+				}),
+			_1: {ctor: '[]'}
+		}
+	};
+};
 var _user$project$Main$buttons = function (model) {
 	return A2(
 		_elm_lang$core$Maybe$withDefault,
 		{ctor: '[]'},
 		A2(
 			_elm_lang$core$Maybe$map,
-			function (item) {
-				return {
-					ctor: '::',
-					_0: A2(
-						_elm_lang$html$Html$button,
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html_Events$onClick(_user$project$Main$Remove),
-							_1: {ctor: '[]'}
-						},
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html$text('Remove'),
-							_1: {ctor: '[]'}
-						}),
-					_1: {
-						ctor: '::',
-						_0: A2(
-							_elm_lang$html$Html$button,
-							{
-								ctor: '::',
-								_0: _elm_lang$html$Html_Events$onClick(_user$project$Main$Play),
-								_1: {ctor: '[]'}
-							},
-							{
-								ctor: '::',
-								_0: _elm_lang$html$Html$text('Play'),
-								_1: {ctor: '[]'}
-							}),
-						_1: {
-							ctor: '::',
-							_0: A2(
-								_elm_lang$html$Html$a,
-								{
-									ctor: '::',
-									_0: _elm_lang$html$Html_Attributes$href(item.url),
-									_1: {
-										ctor: '::',
-										_0: _elm_lang$html$Html_Attributes$target('_blank'),
-										_1: {ctor: '[]'}
-									}
-								},
-								{
-									ctor: '::',
-									_0: _elm_lang$html$Html$text(item.name),
-									_1: {ctor: '[]'}
-								}),
-							_1: {ctor: '[]'}
-						}
-					}
-				};
-			},
+			_user$project$Main$player,
 			A2(_user$project$Main$getItem, model, _elm_lang$core$Maybe$Just)));
 };
 var _user$project$Main$view = function (model) {
@@ -21671,9 +22469,7 @@ var _user$project$Main$view = function (model) {
 										ctor: '::',
 										_0: {
 											ctor: '::',
-											_0: A2(
-												_elm_lang$html$Html$div,
-												{ctor: '[]'},
+											_0: _rundis$elm_bootstrap$Bootstrap_ListGroup$custom(
 												A2(
 													_elm_lang$core$List$concatMap,
 													_elm_lang$core$Basics$identity,
