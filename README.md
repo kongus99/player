@@ -1,1 +1,1 @@
-# player for Youtube music
+# Player for Youtube music
