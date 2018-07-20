@@ -230,7 +230,7 @@ player item =
         [ Progress.label item.name
         , Progress.value 100
         , Progress.wrapperAttrs
-            [ A.style [ ( "fontSize", "28px" ), ( "height", "50px" ) ]
+            [ A.style [ ( "fontSize", "26px" ), ( "height", "50px" ) ]
             ]
         ]
     , ButtonGroup.linkButtonGroup

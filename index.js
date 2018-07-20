@@ -22269,7 +22269,7 @@ var _user$project$Main$player = function (item) {
 								_0: _elm_lang$html$Html_Attributes$style(
 									{
 										ctor: '::',
-										_0: {ctor: '_Tuple2', _0: 'fontSize', _1: '28px'},
+										_0: {ctor: '_Tuple2', _0: 'fontSize', _1: '26px'},
 										_1: {
 											ctor: '::',
 											_0: {ctor: '_Tuple2', _0: 'height', _1: '50px'},
