@@ -1,7 +1,7 @@
 port module Player exposing (Model, Msg(..), decode, elmToPlayer, init)
 
 import Array exposing (Array)
-import Item exposing (ValidItem)
+import Item exposing (Item)
 
 
 -- -1 – unstarted
@@ -20,13 +20,13 @@ type State
 
 
 type Msg
-    = Play (Array ValidItem)
+    = Play (Array Item)
     | Toggle
     | StateChange State
 
 
 type alias Model =
-    { state : State, items : Array ValidItem, index : Int }
+    { state : State, items : Array Item, index : Int }
 
 
 init : Model
@@ -59,7 +59,7 @@ playCmd : Model -> List (Cmd msg)
 playCmd { index, items } =
     [ items
         |> Array.get index
-        |> Maybe.map .id
+        |> Maybe.andThen .id
         |> elmToPlayer
     ]
 

@@ -20564,24 +20564,8 @@ var _rundis$elm_bootstrap$Bootstrap_Modal$footer = F3(
 				}));
 	});
 
-var _user$project$Item$getName = function (model) {
-	var _p0 = model;
-	if (_p0.ctor === 'Incorrect') {
-		return _p0._0.name;
-	} else {
-		return _p0._0.name;
-	}
-};
-var _user$project$Item$getUrl = function (model) {
-	var _p1 = model;
-	if (_p1.ctor === 'Incorrect') {
-		return _p1._0.url;
-	} else {
-		return _p1._0.url;
-	}
-};
 var _user$project$Item$parseUrl = function (url) {
-	var _p2 = A2(
+	var _p0 = A2(
 		_AIRTucha$pathfinder$Pathfinder$parse,
 		A2(
 			_AIRTucha$pathfinder$Pathfinder_ops['<?>'],
@@ -20591,90 +20575,57 @@ var _user$project$Item$parseUrl = function (url) {
 				_AIRTucha$pathfinder$Pathfinder$p('v'),
 				_AIRTucha$pathfinder$Pathfinder$str)),
 		url);
-	if (_p2.ctor === 'Str') {
-		return _elm_lang$core$Maybe$Just(_p2._0);
+	if (_p0.ctor === 'Str') {
+		return _elm_lang$core$Maybe$Just(_p0._0);
 	} else {
 		return _elm_lang$core$Maybe$Nothing;
 	}
 };
-var _user$project$Item$Item = F2(
-	function (a, b) {
-		return {name: a, url: b};
-	});
-var _user$project$Item$ValidItem = F3(
+var _user$project$Item$Item = F3(
 	function (a, b, c) {
 		return {name: a, id: b, url: c};
 	});
+var _user$project$Item$init = A3(_user$project$Item$Item, '', _elm_lang$core$Maybe$Nothing, '');
 var _user$project$Item$decode = F2(
 	function (name, url) {
-		return A2(
-			_elm_lang$core$Maybe$map,
-			function (id) {
-				return A3(_user$project$Item$ValidItem, name, id, url);
-			},
-			_user$project$Item$parseUrl(url));
+		return A3(
+			_user$project$Item$Item,
+			name,
+			_user$project$Item$parseUrl(url),
+			url);
 	});
-var _user$project$Item$Correct = function (a) {
-	return {ctor: 'Correct', _0: a};
-};
-var _user$project$Item$Incorrect = function (a) {
-	return {ctor: 'Incorrect', _0: a};
-};
-var _user$project$Item$init = _user$project$Item$Incorrect(
-	A2(_user$project$Item$Item, '', ''));
 var _user$project$Item$Clear = {ctor: 'Clear'};
 var _user$project$Item$update = F2(
-	function (msg, model) {
+	function (msg, item) {
 		update:
 		while (true) {
 			var updateItem = F2(
 				function (url, name) {
-					var _p3 = {
-						ctor: '_Tuple2',
-						_0: _user$project$Item$parseUrl(url),
-						_1: _elm_lang$core$String$length(name)
-					};
-					_v3_0:
-					do {
-						if (_p3._0.ctor === 'Just') {
-							if (_p3._1 === 0) {
-								break _v3_0;
-							} else {
-								return _user$project$Item$Correct(
-									A3(_user$project$Item$ValidItem, name, _p3._0._0, url));
-							}
-						} else {
-							if (_p3._1 === 0) {
-								break _v3_0;
-							} else {
-								return _user$project$Item$Incorrect(
-									A2(_user$project$Item$Item, name, url));
-							}
-						}
-					} while(false);
-					return _user$project$Item$Incorrect(
-						A2(_user$project$Item$Item, name, url));
+					var _p1 = _elm_lang$core$String$length(name);
+					if (_p1 === 0) {
+						return A3(_user$project$Item$Item, name, _elm_lang$core$Maybe$Nothing, '');
+					} else {
+						return A3(
+							_user$project$Item$Item,
+							name,
+							_user$project$Item$parseUrl(url),
+							url);
+					}
 				});
-			var _p4 = msg;
-			switch (_p4.ctor) {
+			var _p2 = msg;
+			switch (_p2.ctor) {
 				case 'ChangeName':
-					return A2(
-						updateItem,
-						_user$project$Item$getUrl(model),
-						_p4._0);
+					return A2(updateItem, item.url, _p2._0);
 				case 'ChangeUrl':
-					return A2(
-						updateItem,
-						_p4._0,
-						_user$project$Item$getName(model));
+					return A2(updateItem, _p2._0, item.name);
 				case 'Save':
-					var _v5 = _user$project$Item$Clear,
-						_v6 = model;
-					msg = _v5;
-					model = _v6;
+					var _v3 = _user$project$Item$Clear,
+						_v4 = item;
+					msg = _v3;
+					item = _v4;
 					continue update;
 				case 'Remove':
-					return model;
+					return item;
 				default:
 					return _user$project$Item$init;
 			}
@@ -20692,134 +20643,158 @@ var _user$project$Item$ChangeUrl = function (a) {
 var _user$project$Item$ChangeName = function (a) {
 	return {ctor: 'ChangeName', _0: a};
 };
-var _user$project$Item$view = function (model) {
+var _user$project$Item$view = function (item) {
 	return A2(
-		_elm_lang$html$Html$div,
+		_rundis$elm_bootstrap$Bootstrap_Form$form,
 		{ctor: '[]'},
-		A2(
-			_elm_lang$core$List$append,
-			{
-				ctor: '::',
-				_0: A2(
-					_elm_lang$html$Html$input,
-					{
-						ctor: '::',
-						_0: _elm_lang$html$Html_Attributes$placeholder('Name'),
-						_1: {
+		{
+			ctor: '::',
+			_0: A2(
+				_rundis$elm_bootstrap$Bootstrap_Form$group,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: _rundis$elm_bootstrap$Bootstrap_Form_Input$text(
+						{
 							ctor: '::',
-							_0: _elm_lang$html$Html_Events$onInput(_user$project$Item$ChangeName),
+							_0: _rundis$elm_bootstrap$Bootstrap_Form_Input$placeholder('Name'),
 							_1: {
 								ctor: '::',
-								_0: _elm_lang$html$Html_Attributes$value(
-									_user$project$Item$getName(model)),
-								_1: {ctor: '[]'}
+								_0: _rundis$elm_bootstrap$Bootstrap_Form_Input$onInput(_user$project$Item$ChangeName),
+								_1: {
+									ctor: '::',
+									_0: _rundis$elm_bootstrap$Bootstrap_Form_Input$value(item.name),
+									_1: {ctor: '[]'}
+								}
 							}
-						}
-					},
+						}),
+					_1: {ctor: '[]'}
+				}),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_rundis$elm_bootstrap$Bootstrap_Form$group,
+					{ctor: '[]'},
 					{
 						ctor: '::',
-						_0: _elm_lang$html$Html$text(
-							_user$project$Item$getName(model)),
+						_0: _rundis$elm_bootstrap$Bootstrap_Form_Input$text(
+							{
+								ctor: '::',
+								_0: _rundis$elm_bootstrap$Bootstrap_Form_Input$placeholder('Url'),
+								_1: {
+									ctor: '::',
+									_0: _rundis$elm_bootstrap$Bootstrap_Form_Input$onInput(_user$project$Item$ChangeUrl),
+									_1: {
+										ctor: '::',
+										_0: _rundis$elm_bootstrap$Bootstrap_Form_Input$value(item.url),
+										_1: {ctor: '[]'}
+									}
+								}
+							}),
 						_1: {ctor: '[]'}
 					}),
 				_1: {
 					ctor: '::',
 					_0: A2(
-						_elm_lang$html$Html$input,
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html_Attributes$placeholder('Url'),
-							_1: {
-								ctor: '::',
-								_0: _elm_lang$html$Html_Events$onInput(_user$project$Item$ChangeUrl),
-								_1: {
+						_rundis$elm_bootstrap$Bootstrap_Form$group,
+						{ctor: '[]'},
+						function () {
+							var _p3 = item.id;
+							if (_p3.ctor === 'Just') {
+								return {
 									ctor: '::',
-									_0: _elm_lang$html$Html_Attributes$value(
-										_user$project$Item$getUrl(model)),
+									_0: A2(
+										_rundis$elm_bootstrap$Bootstrap_Button$button,
+										{
+											ctor: '::',
+											_0: _rundis$elm_bootstrap$Bootstrap_Button$onClick(
+												_user$project$Item$Save(item)),
+											_1: {
+												ctor: '::',
+												_0: _rundis$elm_bootstrap$Bootstrap_Button$secondary,
+												_1: {ctor: '[]'}
+											}
+										},
+										{
+											ctor: '::',
+											_0: _HolyMeekrob$elm_font_awesome_5$FontAwesome$icon(_HolyMeekrob$elm_font_awesome_5$FontAwesome$save),
+											_1: {ctor: '[]'}
+										}),
+									_1: {
+										ctor: '::',
+										_0: A2(
+											_rundis$elm_bootstrap$Bootstrap_Button$button,
+											{
+												ctor: '::',
+												_0: _rundis$elm_bootstrap$Bootstrap_Button$onClick(_user$project$Item$Clear),
+												_1: {
+													ctor: '::',
+													_0: _rundis$elm_bootstrap$Bootstrap_Button$secondary,
+													_1: {ctor: '[]'}
+												}
+											},
+											{
+												ctor: '::',
+												_0: _HolyMeekrob$elm_font_awesome_5$FontAwesome$icon(_HolyMeekrob$elm_font_awesome_5$FontAwesome$eraser),
+												_1: {ctor: '[]'}
+											}),
+										_1: {
+											ctor: '::',
+											_0: A2(
+												_rundis$elm_bootstrap$Bootstrap_Button$button,
+												{
+													ctor: '::',
+													_0: _rundis$elm_bootstrap$Bootstrap_Button$onClick(
+														_user$project$Item$Remove(_p3._0)),
+													_1: {
+														ctor: '::',
+														_0: _rundis$elm_bootstrap$Bootstrap_Button$secondary,
+														_1: {ctor: '[]'}
+													}
+												},
+												{
+													ctor: '::',
+													_0: _HolyMeekrob$elm_font_awesome_5$FontAwesome$icon(_HolyMeekrob$elm_font_awesome_5$FontAwesome$trash),
+													_1: {ctor: '[]'}
+												}),
+											_1: {ctor: '[]'}
+										}
+									}
+								};
+							} else {
+								return {
+									ctor: '::',
+									_0: A2(
+										_elm_lang$html$Html$div,
+										{ctor: '[]'},
+										{
+											ctor: '::',
+											_0: A2(
+												_rundis$elm_bootstrap$Bootstrap_Button$button,
+												{
+													ctor: '::',
+													_0: _rundis$elm_bootstrap$Bootstrap_Button$onClick(_user$project$Item$Clear),
+													_1: {
+														ctor: '::',
+														_0: _rundis$elm_bootstrap$Bootstrap_Button$secondary,
+														_1: {ctor: '[]'}
+													}
+												},
+												{
+													ctor: '::',
+													_0: _HolyMeekrob$elm_font_awesome_5$FontAwesome$icon(_HolyMeekrob$elm_font_awesome_5$FontAwesome$eraser),
+													_1: {ctor: '[]'}
+												}),
+											_1: {ctor: '[]'}
+										}),
 									_1: {ctor: '[]'}
-								}
+								};
 							}
-						},
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html$text(
-								_user$project$Item$getUrl(model)),
-							_1: {ctor: '[]'}
-						}),
+						}()),
 					_1: {ctor: '[]'}
 				}
-			},
-			function () {
-				var _p5 = model;
-				if (_p5.ctor === 'Correct') {
-					var _p6 = _p5._0;
-					return {
-						ctor: '::',
-						_0: A2(
-							_elm_lang$html$Html$button,
-							{
-								ctor: '::',
-								_0: _elm_lang$html$Html_Events$onClick(
-									_user$project$Item$Save(_p6)),
-								_1: {ctor: '[]'}
-							},
-							{
-								ctor: '::',
-								_0: _elm_lang$html$Html$text('Save'),
-								_1: {ctor: '[]'}
-							}),
-						_1: {
-							ctor: '::',
-							_0: A2(
-								_elm_lang$html$Html$button,
-								{
-									ctor: '::',
-									_0: _elm_lang$html$Html_Events$onClick(_user$project$Item$Clear),
-									_1: {ctor: '[]'}
-								},
-								{
-									ctor: '::',
-									_0: _elm_lang$html$Html$text('Clear'),
-									_1: {ctor: '[]'}
-								}),
-							_1: {
-								ctor: '::',
-								_0: A2(
-									_elm_lang$html$Html$button,
-									{
-										ctor: '::',
-										_0: _elm_lang$html$Html_Events$onClick(
-											_user$project$Item$Remove(_p6.id)),
-										_1: {ctor: '[]'}
-									},
-									{
-										ctor: '::',
-										_0: _elm_lang$html$Html$text('Remove'),
-										_1: {ctor: '[]'}
-									}),
-								_1: {ctor: '[]'}
-							}
-						}
-					};
-				} else {
-					return {
-						ctor: '::',
-						_0: A2(
-							_elm_lang$html$Html$button,
-							{
-								ctor: '::',
-								_0: _elm_lang$html$Html_Events$onClick(_user$project$Item$Clear),
-								_1: {ctor: '[]'}
-							},
-							{
-								ctor: '::',
-								_0: _elm_lang$html$Html$text('Clear'),
-								_1: {ctor: '[]'}
-							}),
-						_1: {ctor: '[]'}
-					};
-				}
-			}()));
+			}
+		});
 };
 
 var _user$project$MyModal$init = {modalVisibility: _rundis$elm_bootstrap$Bootstrap_Modal$hidden, title: ''};
@@ -20919,7 +20894,7 @@ var _user$project$Player$playCmd = function (_p0) {
 		ctor: '::',
 		_0: _user$project$Player$elmToPlayer(
 			A2(
-				_elm_lang$core$Maybe$map,
+				_elm_lang$core$Maybe$andThen,
 				function (_) {
 					return _.id;
 				},
@@ -21340,7 +21315,7 @@ var _user$project$Storage$subscriptions = F2(
 var _user$project$Main$getItem = F2(
 	function (model, getter) {
 		return A2(
-			_elm_lang$core$Maybe$map,
+			_elm_lang$core$Maybe$andThen,
 			getter,
 			A2(
 				_elm_lang$core$Maybe$andThen,
@@ -21361,11 +21336,19 @@ var _user$project$Main$decodePool = function (value) {
 		function (_p0) {
 			return _elm_lang$core$Dict$fromList(
 				A2(
-					_elm_lang$core$List$map,
-					function (e) {
-						return {ctor: '_Tuple2', _0: e.id, _1: e};
-					},
-					A2(_elm_lang$core$List$filterMap, _elm_lang$core$Basics$identity, _p0)));
+					_elm_lang$core$List$filterMap,
+					_elm_lang$core$Basics$identity,
+					A2(
+						_elm_lang$core$List$map,
+						function (e) {
+							return A2(
+								_elm_lang$core$Maybe$map,
+								function (id) {
+									return {ctor: '_Tuple2', _0: id, _1: e};
+								},
+								e.id);
+						},
+						_p0)));
 		},
 		_elm_lang$core$Json_Decode$list(item));
 	var _p1 = A2(_elm_lang$core$Json_Decode$decodeValue, playlist, value);
@@ -21440,67 +21423,72 @@ var _user$project$Main$Select = function (a) {
 };
 var _user$project$Main$listItem = F2(
 	function (current, item) {
-		return {
-			ctor: '::',
-			_0: A2(
-				_elm_lang$html$Html$div,
-				{ctor: '[]'},
-				{
-					ctor: '::',
-					_0: A2(
-						_elm_lang$html$Html$input,
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html_Attributes$type_('checkbox'),
-							_1: {
+		var _p6 = item.id;
+		if (_p6.ctor === 'Nothing') {
+			return {ctor: '[]'};
+		} else {
+			var _p7 = _p6._0;
+			return {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$div,
+					{ctor: '[]'},
+					{
+						ctor: '::',
+						_0: A2(
+							_elm_lang$html$Html$input,
+							{
 								ctor: '::',
-								_0: _elm_lang$html$Html_Attributes$id(item.url),
+								_0: _elm_lang$html$Html_Attributes$type_('checkbox'),
 								_1: {
 									ctor: '::',
-									_0: _elm_lang$html$Html_Attributes$name('playlist_item'),
+									_0: _elm_lang$html$Html_Attributes$id(item.url),
 									_1: {
 										ctor: '::',
-										_0: _elm_lang$html$Html_Attributes$value(item.name),
+										_0: _elm_lang$html$Html_Attributes$name('playlist_item'),
 										_1: {
 											ctor: '::',
-											_0: _elm_lang$html$Html_Attributes$checked(
-												A2(_elm_lang$core$Set$member, item.id, current)),
+											_0: _elm_lang$html$Html_Attributes$value(item.name),
 											_1: {
 												ctor: '::',
-												_0: _elm_lang$html$Html_Events$onClick(
-													_user$project$Main$Select(item.id)),
-												_1: {ctor: '[]'}
+												_0: _elm_lang$html$Html_Attributes$checked(
+													A2(_elm_lang$core$Set$member, _p7, current)),
+												_1: {
+													ctor: '::',
+													_0: _elm_lang$html$Html_Events$onClick(
+														_user$project$Main$Select(_p7)),
+													_1: {ctor: '[]'}
+												}
 											}
 										}
 									}
 								}
-							}
-						},
-						{ctor: '[]'}),
-					_1: {
-						ctor: '::',
-						_0: A2(
-							_elm_lang$html$Html$label,
-							{
-								ctor: '::',
-								_0: _elm_lang$html$Html_Attributes$for(item.url),
-								_1: {ctor: '[]'}
 							},
-							{
-								ctor: '::',
-								_0: _elm_lang$html$Html$text(item.name),
-								_1: {ctor: '[]'}
-							}),
-						_1: {ctor: '[]'}
-					}
-				}),
-			_1: {ctor: '[]'}
-		};
+							{ctor: '[]'}),
+						_1: {
+							ctor: '::',
+							_0: A2(
+								_elm_lang$html$Html$label,
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html_Attributes$for(item.url),
+									_1: {ctor: '[]'}
+								},
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html$text(item.name),
+									_1: {ctor: '[]'}
+								}),
+							_1: {ctor: '[]'}
+						}
+					}),
+				_1: {ctor: '[]'}
+			};
+		}
 	});
 var _user$project$Main$Play = {ctor: 'Play'};
 var _user$project$Main$Remove = {ctor: 'Remove'};
 var _user$project$Main$buttons = function (model) {
-	var maybeItem = A2(_user$project$Main$getItem, model, _elm_lang$core$Basics$identity);
 	return A2(
 		_elm_lang$core$Maybe$withDefault,
 		{ctor: '[]'},
@@ -21558,9 +21546,15 @@ var _user$project$Main$buttons = function (model) {
 					}
 				};
 			},
-			maybeItem));
+			A2(_user$project$Main$getItem, model, _elm_lang$core$Maybe$Just)));
 };
 var _user$project$Main$view = function (model) {
+	var visibleWhenPlaylistExists = function (element) {
+		return _user$project$Playlist$isEmpty(model.playlist) ? A2(
+			_elm_lang$html$Html$div,
+			{ctor: '[]'},
+			{ctor: '[]'}) : element;
+	};
 	var playlistControls = A2(
 		_elm_lang$html$Html$div,
 		{
@@ -21587,15 +21581,42 @@ var _user$project$Main$view = function (model) {
 				}),
 			_1: {
 				ctor: '::',
-				_0: _user$project$Playlist$isEmpty(model.playlist) ? A2(
-					_elm_lang$html$Html$div,
-					{ctor: '[]'},
-					{ctor: '[]'}) : A2(
-					_elm_lang$html$Html$map,
-					_user$project$Main$PlaylistMsg,
-					_user$project$Playlist$selector(model.playlist)),
-				_1: {ctor: '[]'}
+				_0: visibleWhenPlaylistExists(
+					A2(
+						_elm_lang$html$Html$map,
+						_user$project$Main$PlaylistMsg,
+						_user$project$Playlist$selector(model.playlist))),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$map,
+						_user$project$Main$ModalMsg,
+						A2(
+							_user$project$MyModal$contents,
+							A2(
+								_elm_lang$html$Html$map,
+								_user$project$Main$PlaylistMsg,
+								_user$project$Playlist$creator(model.playlist)),
+							model.myModal)),
+					_1: {ctor: '[]'}
+				}
 			}
+		});
+	var itemEditorControls = A2(
+		_elm_lang$html$Html$div,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Attributes$class('input-group'),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: visibleWhenPlaylistExists(
+				A2(
+					_elm_lang$html$Html$map,
+					_user$project$Main$EditMsg,
+					_user$project$Item$view(model.edited))),
+			_1: {ctor: '[]'}
 		});
 	return A2(
 		_rundis$elm_bootstrap$Bootstrap_Grid$container,
@@ -21605,28 +21626,19 @@ var _user$project$Main$view = function (model) {
 			_0: _rundis$elm_bootstrap$Bootstrap_CDN$stylesheet,
 			_1: {
 				ctor: '::',
-				_0: _HolyMeekrob$elm_font_awesome_5$FontAwesome$useCss,
+				_0: _HolyMeekrob$elm_font_awesome_5$FontAwesome$useSvg,
 				_1: {
 					ctor: '::',
 					_0: playlistControls,
 					_1: {
 						ctor: '::',
-						_0: A2(
-							_elm_lang$html$Html$map,
-							_user$project$Main$ModalMsg,
-							A2(
-								_user$project$MyModal$contents,
-								A2(
-									_elm_lang$html$Html$map,
-									_user$project$Main$PlaylistMsg,
-									_user$project$Playlist$creator(model.playlist)),
-								model.myModal)),
+						_0: itemEditorControls,
 						_1: function () {
-							var _p6 = A2(
+							var _p8 = A2(
 								_elm_lang$core$Maybe$map,
 								_elm_lang$core$Set$fromList,
 								_user$project$Playlist$current(model.playlist));
-							if (_p6.ctor === 'Nothing') {
+							if (_p8.ctor === 'Nothing') {
 								return {ctor: '[]'};
 							} else {
 								return _elm_lang$core$List$concat(
@@ -21638,28 +21650,21 @@ var _user$project$Main$view = function (model) {
 											_0: {
 												ctor: '::',
 												_0: A2(
-													_elm_lang$html$Html$map,
-													_user$project$Main$EditMsg,
-													_user$project$Item$view(model.edited)),
-												_1: {
-													ctor: '::',
-													_0: A2(
-														_elm_lang$html$Html$div,
-														{ctor: '[]'},
+													_elm_lang$html$Html$div,
+													{ctor: '[]'},
+													A2(
+														_elm_lang$core$List$concatMap,
+														_elm_lang$core$Basics$identity,
 														A2(
-															_elm_lang$core$List$concatMap,
-															_elm_lang$core$Basics$identity,
+															_elm_lang$core$List$map,
+															_user$project$Main$listItem(_p8._0),
 															A2(
-																_elm_lang$core$List$map,
-																_user$project$Main$listItem(_p6._0),
-																A2(
-																	_elm_lang$core$List$sortBy,
-																	function (_) {
-																		return _.name;
-																	},
-																	_elm_lang$core$Dict$values(model.pool))))),
-													_1: {ctor: '[]'}
-												}
+																_elm_lang$core$List$sortBy,
+																function (_) {
+																	return _.name;
+																},
+																_elm_lang$core$Dict$values(model.pool))))),
+												_1: {ctor: '[]'}
 											},
 											_1: {ctor: '[]'}
 										}
@@ -21678,14 +21683,22 @@ var _user$project$Main$update = F2(
 	function (msg, model) {
 		update:
 		while (true) {
-			var _p7 = msg;
-			switch (_p7.ctor) {
+			var _p9 = msg;
+			switch (_p9.ctor) {
 				case 'Add':
-					var _p8 = _p7._0;
+					var _p10 = _p9._0;
 					var mdl = _elm_lang$core$Native_Utils.update(
 						model,
 						{
-							pool: A3(_elm_lang$core$Dict$insert, _p8.id, _p8, model.pool)
+							pool: A2(
+								_elm_lang$core$Maybe$withDefault,
+								model.pool,
+								A2(
+									_elm_lang$core$Maybe$map,
+									function (id) {
+										return A3(_elm_lang$core$Dict$insert, id, _p10, model.pool);
+									},
+									_p10.id))
 						});
 					return A2(
 						_elm_lang$core$Platform_Cmd_ops['!'],
@@ -21721,12 +21734,12 @@ var _user$project$Main$update = F2(
 								model.playlist,
 								A2(
 									_elm_lang$core$Maybe$map,
-									function (_p9) {
+									function (_p11) {
 										return A3(
 											_elm_lang$core$Basics$flip,
 											_user$project$Playlist$update,
 											model.playlist,
-											_user$project$Playlist$RemoveSong(_p9));
+											_user$project$Playlist$RemoveSong(_p11));
 									},
 									id))
 						});
@@ -21750,18 +21763,18 @@ var _user$project$Main$update = F2(
 							{
 								playlist: A2(
 									_user$project$Playlist$update,
-									_user$project$Playlist$ToggleSong(_p7._0),
+									_user$project$Playlist$ToggleSong(_p9._0),
 									model.playlist)
 							}),
 						{ctor: '[]'});
 				case 'UpdatePorts':
 					var mdl = function () {
-						var _p10 = _p7._0;
-						if (_p10.ctor === 'GetItemOperation') {
+						var _p12 = _p9._0;
+						if (_p12.ctor === 'GetItemOperation') {
 							return _elm_lang$core$Native_Utils.update(
 								model,
 								{
-									pool: _user$project$Main$decodePool(_p7._3)
+									pool: _user$project$Main$decodePool(_p9._3)
 								});
 						} else {
 							return model;
@@ -21773,26 +21786,26 @@ var _user$project$Main$update = F2(
 							mdl,
 							{
 								storage: function () {
-									var _p11 = _p7._1;
-									if (_p11.ctor === 'Nothing') {
+									var _p13 = _p9._1;
+									if (_p13.ctor === 'Nothing') {
 										return model.storage;
 									} else {
-										return A2(_billstclair$elm_localstorage$LocalStorage$setPorts, _p11._0, model.storage);
+										return A2(_billstclair$elm_localstorage$LocalStorage$setPorts, _p13._0, model.storage);
 									}
 								}()
 							}),
 						{ctor: '[]'});
 				case 'EditMsg':
-					var _p13 = _p7._0;
-					var newItem = A2(_user$project$Item$update, _p13, model.edited);
-					var _p12 = _p13;
-					if (_p12.ctor === 'Save') {
-						var _v7 = _user$project$Main$Add(_p12._0),
-							_v8 = _elm_lang$core$Native_Utils.update(
+					var _p15 = _p9._0;
+					var newItem = A2(_user$project$Item$update, _p15, model.edited);
+					var _p14 = _p15;
+					if (_p14.ctor === 'Save') {
+						var _v8 = _user$project$Main$Add(_p14._0),
+							_v9 = _elm_lang$core$Native_Utils.update(
 							model,
 							{edited: newItem});
-						msg = _v7;
-						model = _v8;
+						msg = _v8;
+						model = _v9;
 						continue update;
 					} else {
 						return A2(
@@ -21808,7 +21821,7 @@ var _user$project$Main$update = F2(
 						_elm_lang$core$Native_Utils.update(
 							model,
 							{
-								playlist: A2(_user$project$Playlist$update, _p7._0, model.playlist)
+								playlist: A2(_user$project$Playlist$update, _p9._0, model.playlist)
 							}),
 						{ctor: '[]'});
 				case 'Play':
@@ -21818,11 +21831,11 @@ var _user$project$Main$update = F2(
 						function (_) {
 							return _.id;
 						});
-					var _p14 = {ctor: '_Tuple2', _0: current, _1: model.playing};
-					if (_p14._0.ctor === 'Just') {
-						if (_p14._1.ctor === 'Just') {
-							var _p15 = _p14._0._0;
-							return _elm_lang$core$Native_Utils.eq(_p15, _p14._1._0) ? A2(
+					var _p16 = {ctor: '_Tuple2', _0: current, _1: model.playing};
+					if (_p16._0.ctor === 'Just') {
+						if (_p16._1.ctor === 'Just') {
+							var _p17 = _p16._0._0;
+							return _elm_lang$core$Native_Utils.eq(_p17, _p16._1._0) ? A2(
 								_elm_lang$core$Platform_Cmd_ops['!'],
 								_elm_lang$core$Native_Utils.update(
 									model,
@@ -21836,7 +21849,7 @@ var _user$project$Main$update = F2(
 								_elm_lang$core$Native_Utils.update(
 									model,
 									{
-										playing: _elm_lang$core$Maybe$Just(_p15)
+										playing: _elm_lang$core$Maybe$Just(_p17)
 									}),
 								{
 									ctor: '::',
@@ -21849,7 +21862,7 @@ var _user$project$Main$update = F2(
 								_elm_lang$core$Native_Utils.update(
 									model,
 									{
-										playing: _elm_lang$core$Maybe$Just(_p14._0._0)
+										playing: _elm_lang$core$Maybe$Just(_p16._0._0)
 									}),
 								{
 									ctor: '::',
@@ -21864,13 +21877,13 @@ var _user$project$Main$update = F2(
 							{ctor: '[]'});
 					}
 				default:
-					var _p17 = _p7._0;
-					var _p16 = _p17;
-					if (_p16.ctor === 'UpdateModal') {
-						var _v11 = _p16._0,
-							_v12 = model;
-						msg = _v11;
-						model = _v12;
+					var _p19 = _p9._0;
+					var _p18 = _p19;
+					if (_p18.ctor === 'UpdateModal') {
+						var _v12 = _p18._0,
+							_v13 = model;
+						msg = _v12;
+						model = _v13;
 						continue update;
 					} else {
 						return A2(
@@ -21878,7 +21891,7 @@ var _user$project$Main$update = F2(
 							_elm_lang$core$Native_Utils.update(
 								model,
 								{
-									myModal: A2(_user$project$MyModal$update, _p17, model.myModal)
+									myModal: A2(_user$project$MyModal$update, _p19, model.myModal)
 								}),
 							{ctor: '[]'});
 					}
@@ -21896,7 +21909,7 @@ var _user$project$Main$main = _elm_lang$html$Html$program(
 var Elm = {};
 Elm['Main'] = Elm['Main'] || {};
 if (typeof _user$project$Main$main !== 'undefined') {
-    _user$project$Main$main(Elm['Main'], 'Main', {"types":{"message":"Main.Msg","aliases":{"LocalStorage.SharedTypes.GetItemPort":{"type":"LocalStorage.SharedTypes.Key -> Platform.Cmd.Cmd msg","args":["msg"]},"Item.ValidItem":{"type":"{ name : String, id : String, url : String }","args":[]},"LocalStorage.SharedTypes.DictState":{"type":"Dict.Dict LocalStorage.SharedTypes.Key LocalStorage.SharedTypes.Value","args":[]},"LocalStorage.SharedTypes.Key":{"type":"String","args":[]},"LocalStorage.SharedTypes.Value":{"type":"Json.Encode.Value","args":[]},"LocalStorage.SharedTypes.SetItemPort":{"type":"( LocalStorage.SharedTypes.Key, LocalStorage.SharedTypes.Value ) -> Platform.Cmd.Cmd msg","args":["msg"]},"LocalStorage.SharedTypes.ClearPort":{"type":"String -> Platform.Cmd.Cmd msg","args":["msg"]},"LocalStorage.SharedTypes.ListKeysPort":{"type":"String -> Platform.Cmd.Cmd msg","args":["msg"]}},"unions":{"LocalStorage.SharedTypes.Ports":{"tags":{"Ports":["{ getItem : LocalStorage.SharedTypes.Ports msg -> LocalStorage.SharedTypes.GetItemPort msg , setItem : LocalStorage.SharedTypes.Ports msg -> LocalStorage.SharedTypes.SetItemPort msg , clear : LocalStorage.SharedTypes.Ports msg -> LocalStorage.SharedTypes.ClearPort msg , listKeys : LocalStorage.SharedTypes.Ports msg -> LocalStorage.SharedTypes.ListKeysPort msg , state : LocalStorage.SharedTypes.DictState }"]},"args":["msg"]},"Main.Msg":{"tags":{"ModalMsg":["MyModal.Msg Main.Msg"],"Select":["String"],"UpdatePorts":["LocalStorage.SharedTypes.Operation","Maybe.Maybe (LocalStorage.SharedTypes.Ports Main.Msg)","LocalStorage.SharedTypes.Key","LocalStorage.SharedTypes.Value"],"Play":[],"PlaylistMsg":["Playlist.Msg"],"EditMsg":["Item.Msg"],"Remove":[],"Add":["Item.ValidItem"]},"args":[]},"Dict.NColor":{"tags":{"Black":[],"BBlack":[],"Red":[],"NBlack":[]},"args":[]},"MyModal.Msg":{"tags":{"CloseModal":[],"UpdateModal":["msg"],"ShowModal":["String"]},"args":["msg"]},"Playlist.Msg":{"tags":{"DeletePlaylist":[],"RemoveSong":["String"],"ToggleSong":["String"],"AddPlaylist":[],"EditPlaylist":["String"],"SelectPlaylist":["String"]},"args":[]},"Dict.LeafColor":{"tags":{"LBlack":[],"LBBlack":[]},"args":[]},"Platform.Cmd.Cmd":{"tags":{"Cmd":[]},"args":["msg"]},"Item.Msg":{"tags":{"ChangeUrl":["String"],"Save":["Item.ValidItem"],"Remove":["String"],"ChangeName":["String"],"Clear":[]},"args":[]},"Json.Encode.Value":{"tags":{"Value":[]},"args":[]},"LocalStorage.SharedTypes.Operation":{"tags":{"ClearOperation":[],"ListKeysOperation":[],"SetItemOperation":[],"ErrorOperation":[],"GetItemOperation":[]},"args":[]},"Maybe.Maybe":{"tags":{"Nothing":[],"Just":["a"]},"args":["a"]},"Dict.Dict":{"tags":{"RBNode_elm_builtin":["Dict.NColor","k","v","Dict.Dict k v","Dict.Dict k v"],"RBEmpty_elm_builtin":["Dict.LeafColor"]},"args":["k","v"]}}},"versions":{"elm":"0.18.0"}});
+    _user$project$Main$main(Elm['Main'], 'Main', {"types":{"message":"Main.Msg","aliases":{"LocalStorage.SharedTypes.GetItemPort":{"type":"LocalStorage.SharedTypes.Key -> Platform.Cmd.Cmd msg","args":["msg"]},"LocalStorage.SharedTypes.DictState":{"type":"Dict.Dict LocalStorage.SharedTypes.Key LocalStorage.SharedTypes.Value","args":[]},"Item.Item":{"type":"{ name : String, id : Maybe.Maybe String, url : String }","args":[]},"LocalStorage.SharedTypes.Key":{"type":"String","args":[]},"LocalStorage.SharedTypes.Value":{"type":"Json.Encode.Value","args":[]},"LocalStorage.SharedTypes.SetItemPort":{"type":"( LocalStorage.SharedTypes.Key, LocalStorage.SharedTypes.Value ) -> Platform.Cmd.Cmd msg","args":["msg"]},"LocalStorage.SharedTypes.ClearPort":{"type":"String -> Platform.Cmd.Cmd msg","args":["msg"]},"LocalStorage.SharedTypes.ListKeysPort":{"type":"String -> Platform.Cmd.Cmd msg","args":["msg"]}},"unions":{"LocalStorage.SharedTypes.Ports":{"tags":{"Ports":["{ getItem : LocalStorage.SharedTypes.Ports msg -> LocalStorage.SharedTypes.GetItemPort msg , setItem : LocalStorage.SharedTypes.Ports msg -> LocalStorage.SharedTypes.SetItemPort msg , clear : LocalStorage.SharedTypes.Ports msg -> LocalStorage.SharedTypes.ClearPort msg , listKeys : LocalStorage.SharedTypes.Ports msg -> LocalStorage.SharedTypes.ListKeysPort msg , state : LocalStorage.SharedTypes.DictState }"]},"args":["msg"]},"Main.Msg":{"tags":{"ModalMsg":["MyModal.Msg Main.Msg"],"Select":["String"],"UpdatePorts":["LocalStorage.SharedTypes.Operation","Maybe.Maybe (LocalStorage.SharedTypes.Ports Main.Msg)","LocalStorage.SharedTypes.Key","LocalStorage.SharedTypes.Value"],"Play":[],"PlaylistMsg":["Playlist.Msg"],"EditMsg":["Item.Msg"],"Remove":[],"Add":["Item.Item"]},"args":[]},"Dict.NColor":{"tags":{"Black":[],"BBlack":[],"Red":[],"NBlack":[]},"args":[]},"MyModal.Msg":{"tags":{"CloseModal":[],"UpdateModal":["msg"],"ShowModal":["String"]},"args":["msg"]},"Playlist.Msg":{"tags":{"DeletePlaylist":[],"RemoveSong":["String"],"ToggleSong":["String"],"AddPlaylist":[],"EditPlaylist":["String"],"SelectPlaylist":["String"]},"args":[]},"Dict.LeafColor":{"tags":{"LBlack":[],"LBBlack":[]},"args":[]},"Platform.Cmd.Cmd":{"tags":{"Cmd":[]},"args":["msg"]},"Item.Msg":{"tags":{"ChangeUrl":["String"],"Save":["Item.Item"],"Remove":["String"],"ChangeName":["String"],"Clear":[]},"args":[]},"Json.Encode.Value":{"tags":{"Value":[]},"args":[]},"LocalStorage.SharedTypes.Operation":{"tags":{"ClearOperation":[],"ListKeysOperation":[],"SetItemOperation":[],"ErrorOperation":[],"GetItemOperation":[]},"args":[]},"Maybe.Maybe":{"tags":{"Nothing":[],"Just":["a"]},"args":["a"]},"Dict.Dict":{"tags":{"RBNode_elm_builtin":["Dict.NColor","k","v","Dict.Dict k v","Dict.Dict k v"],"RBEmpty_elm_builtin":["Dict.LeafColor"]},"args":["k","v"]}}},"versions":{"elm":"0.18.0"}});
 }
 
 if (typeof define === "function" && define['amd'])

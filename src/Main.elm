@@ -9,7 +9,7 @@ import FontAwesome as FA
 import Html as H exposing (Html)
 import Html.Attributes as A
 import Html.Events as E
-import Item exposing (ValidItem)
+import Item exposing (Item)
 import Json.Decode as Dec
 import Json.Encode as Enc
 import LocalStorage exposing (LocalStorage)
@@ -29,10 +29,10 @@ type ModalType
 
 
 type alias Model =
-    { pool : Dict String ValidItem
+    { pool : Dict String Item
     , playlist : Playlist
     , playing : Maybe String
-    , edited : Item.Model
+    , edited : Item
     , player : Player.Model
     , myModalType : ModalType
     , myModal : MyModal.Model
@@ -40,7 +40,7 @@ type alias Model =
     }
 
 
-encodePool : Dict String ValidItem -> Enc.Value
+encodePool : Dict String Item -> Enc.Value
 encodePool =
     let
         item ( k, i ) =
@@ -49,7 +49,7 @@ encodePool =
     Dict.toList >> List.map item >> Enc.list
 
 
-decodePool : Dec.Value -> Dict String ValidItem
+decodePool : Dec.Value -> Dict String Item
 decodePool value =
     let
         item =
@@ -58,7 +58,7 @@ decodePool value =
                 (Dec.field "url" Dec.string)
 
         playlist =
-            Dec.list item |> Dec.map (List.filterMap identity >> List.map (\e -> ( e.id, e )) >> Dict.fromList)
+            Dec.list item |> Dec.map (List.map (\e -> e.id |> Maybe.map (\id -> ( id, e ))) >> List.filterMap identity >> Dict.fromList)
     in
     case Dec.decodeValue playlist value of
         Ok res ->
@@ -93,7 +93,7 @@ init =
 
 
 type Msg
-    = Add ValidItem
+    = Add Item
     | Remove
     | Play
     | Select String
@@ -109,7 +109,7 @@ getItem model getter =
         |> Maybe.andThen List.head
         |> Maybe.andThen
             (flip Dict.get model.pool)
-        |> Maybe.map getter
+        |> Maybe.andThen getter
 
 
 update msg model =
@@ -117,7 +117,7 @@ update msg model =
         Add item ->
             let
                 mdl =
-                    { model | pool = Dict.insert item.id item model.pool }
+                    { model | pool = item.id |> Maybe.map (\id -> Dict.insert id item model.pool) |> Maybe.withDefault model.pool }
             in
             mdl ! [ St.set "playlist" (encodePool mdl.pool) mdl ]
 
@@ -207,29 +207,30 @@ update msg model =
                     { model | myModal = MyModal.update mMsg model.myModal } ! []
 
 
-listItem : Set String -> ValidItem -> List (Html Msg)
+listItem : Set String -> Item -> List (Html Msg)
 listItem current item =
-    [ H.div []
-        [ H.input
-            [ A.type_ "checkbox"
-            , A.id item.url
-            , A.name "playlist_item"
-            , A.value item.name
-            , A.checked (Set.member item.id current)
-            , E.onClick (Select item.id)
-            ]
+    case item.id of
+        Nothing ->
             []
-        , H.label [ A.for item.url ] [ H.text item.name ]
-        ]
-    ]
+
+        Just id ->
+            [ H.div []
+                [ H.input
+                    [ A.type_ "checkbox"
+                    , A.id item.url
+                    , A.name "playlist_item"
+                    , A.value item.name
+                    , A.checked (Set.member id current)
+                    , E.onClick (Select id)
+                    ]
+                    []
+                , H.label [ A.for item.url ] [ H.text item.name ]
+                ]
+            ]
 
 
 buttons model =
-    let
-        maybeItem =
-            getItem model identity
-    in
-    maybeItem
+    getItem model Just
         |> Maybe.map
             (\item ->
                 [ H.button [ E.onClick Remove ]
@@ -245,21 +246,30 @@ buttons model =
 
 view model =
     let
+        visibleWhenPlaylistExists element =
+            if Playlist.isEmpty model.playlist then
+                H.div [] []
+            else
+                element
+
         playlistControls =
             H.div [ A.class "input-group" ]
                 [ H.div [ A.class "input-group-prepend" ]
                     [ H.map ModalMsg <| MyModal.trigger FA.list "Add/Remove Playlist" ]
-                , if Playlist.isEmpty model.playlist then
-                    H.div [] []
-                  else
-                    Playlist.selector model.playlist |> H.map PlaylistMsg
+                , Playlist.selector model.playlist |> H.map PlaylistMsg |> visibleWhenPlaylistExists
+                , H.map ModalMsg <| MyModal.contents (Playlist.creator model.playlist |> H.map PlaylistMsg) model.myModal
+                ]
+
+        itemEditorControls =
+            H.div [ A.class "input-group" ]
+                [ visibleWhenPlaylistExists <| H.map EditMsg (Item.view model.edited)
                 ]
     in
     Grid.container [] <|
         CDN.stylesheet
-            :: FA.useCss
+            :: FA.useSvg
             :: playlistControls
-            :: (H.map ModalMsg <| MyModal.contents (Playlist.creator model.playlist |> H.map PlaylistMsg) model.myModal)
+            :: itemEditorControls
             :: (case Playlist.current model.playlist |> Maybe.map Set.fromList of
                     Nothing ->
                         []
@@ -267,8 +277,7 @@ view model =
                     Just current ->
                         List.concat
                             [ buttons model
-                            , [ H.map EditMsg (Item.view model.edited)
-                              , H.div []
+                            , [ H.div []
                                     (Dict.values model.pool
                                         |> List.sortBy .name
                                         |> List.map (listItem current)
