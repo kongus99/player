@@ -7,18 +7,32 @@ import Html as H exposing (Html)
 import Html.Events as E
 
 
+type ModalType
+    = PlaylistEditor
+    | ItemEditor
+
+
 type alias Model =
-    { modalVisibility : Modal.Visibility, title : String }
+    { modalVisibility : Modal.Visibility, type_ : ModalType }
 
 
 init =
-    { modalVisibility = Modal.hidden, title = "" }
+    { modalVisibility = Modal.hidden, type_ = PlaylistEditor }
 
 
 type Msg msg
     = CloseModal
-    | ShowModal String
+    | ShowModal ModalType
     | UpdateModal msg
+
+
+title type_ =
+    case type_ of
+        PlaylistEditor ->
+            "Add/Remove Playlist"
+
+        ItemEditor ->
+            "Add song"
 
 
 update msg model =
@@ -26,17 +40,17 @@ update msg model =
         CloseModal ->
             init
 
-        ShowModal title ->
-            { model | modalVisibility = Modal.shown, title = title }
+        ShowModal type_ ->
+            { model | modalVisibility = Modal.shown, type_ = type_ }
 
         UpdateModal msg ->
             model
 
 
-trigger icon title =
+trigger icon type_ =
     Button.button
         [ Button.outlinePrimary
-        , Button.attrs [ E.onClick <| ShowModal title ]
+        , Button.attrs [ E.onClick <| ShowModal type_ ]
         ]
         [ FA.icon icon ]
 
@@ -46,7 +60,7 @@ contents content model =
         [ Modal.config CloseModal
             |> Modal.small
             |> Modal.hideOnBackdropClick True
-            |> Modal.h3 [] [ H.text model.title ]
+            |> Modal.h3 [] [ H.text <| title model.type_ ]
             |> Modal.body [] [ content |> H.map UpdateModal ]
             |> Modal.view model.modalVisibility
         ]

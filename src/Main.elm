@@ -24,17 +24,12 @@ import Storage as St
 ---MODEL
 
 
-type ModalType
-    = Playlist
-
-
 type alias Model =
     { pool : Dict String Item
     , playlist : Playlist
     , playing : Maybe String
     , edited : Item
     , player : Player.Model
-    , myModalType : ModalType
     , myModal : MyModal.Model
     , storage : LocalStorage Msg
     }
@@ -85,7 +80,6 @@ init =
                 Nothing
                 Item.init
                 Player.init
-                Playlist
                 MyModal.init
                 St.init
     in
@@ -244,6 +238,15 @@ buttons model =
         |> Maybe.withDefault []
 
 
+modalContents { myModal, playlist, edited } =
+    case myModal.type_ of
+        MyModal.PlaylistEditor ->
+            Playlist.creator playlist |> H.map PlaylistMsg
+
+        MyModal.ItemEditor ->
+            Item.view edited |> H.map EditMsg
+
+
 view model =
     let
         visibleWhenPlaylistExists element =
@@ -255,21 +258,18 @@ view model =
         playlistControls =
             H.div [ A.class "input-group" ]
                 [ H.div [ A.class "input-group-prepend" ]
-                    [ H.map ModalMsg <| MyModal.trigger FA.list "Add/Remove Playlist" ]
+                    [ H.map ModalMsg <| MyModal.trigger FA.list MyModal.PlaylistEditor ]
                 , Playlist.selector model.playlist |> H.map PlaylistMsg |> visibleWhenPlaylistExists
-                , H.map ModalMsg <| MyModal.contents (Playlist.creator model.playlist |> H.map PlaylistMsg) model.myModal
-                ]
-
-        itemEditorControls =
-            H.div [ A.class "input-group" ]
-                [ visibleWhenPlaylistExists <| H.map EditMsg (Item.view model.edited)
+                , H.div [ A.class "input-group-append" ]
+                    [ H.map ModalMsg <| MyModal.trigger FA.plus MyModal.ItemEditor ]
+                    |> visibleWhenPlaylistExists
+                , H.map ModalMsg <| MyModal.contents (modalContents model) model.myModal
                 ]
     in
     Grid.container [] <|
         CDN.stylesheet
             :: FA.useSvg
             :: playlistControls
-            :: itemEditorControls
             :: (case Playlist.current model.playlist |> Maybe.map Set.fromList of
                     Nothing ->
                         []
